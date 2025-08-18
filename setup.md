@@ -34,6 +34,8 @@ dependencies
  python -m pip install "psycopg[binary]"
 ```
 
+## translation
+
 generate django translations
 (install https://mlocati.github.io/articles/gettext-iconv-windows.html)
 
