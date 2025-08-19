@@ -2,6 +2,13 @@
 
 A simple site to organize scuba clubs
 
+## Colours
+
+#50A paars
+
+Han Purple
+#5218fa
+
 ## License
 
 Copyright (c) 2025 Walther Timmer

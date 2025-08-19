@@ -1,9 +1,12 @@
-{% load i18n %}
 <!DOCTYPE html>
+{% load static %}
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}ScubaClub{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'website/images/favicon.ico' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'website/css/style.css' %}">
 </head>
 <body>
     <header>
@@ -11,6 +14,18 @@
         <nav>
             <!-- Add navigation links here -->
         </nav>
+
+        <form action="/i18n/setlang/" method="post">
+            {% csrf_token %}
+            <select name="language">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected{% endif %}>{{ lang.1 }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="{% trans 'Change language' %}">
+        </form>
     </header>
     <main>
         {% block content %}{% endblock %}

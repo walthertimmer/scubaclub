@@ -30,6 +30,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if ENV == "dev":
+    print("Running in development mode")
     DEBUG = True
 else:
     DEBUG = False
@@ -54,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware',    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -106,16 +107,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -131,10 +136,10 @@ LANGUAGES = [
 ]
 
 LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale'),
+    os.path.join(BASE_DIR, 'scubaclub/locale'),
 ]
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC+1'
 
 USE_I18N = True
 

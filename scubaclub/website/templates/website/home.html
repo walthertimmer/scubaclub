@@ -1,9 +1,14 @@
 {% extends "website/base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}Home - ScubaClub{% endblock %}
 
 {% block content %}
-    <h2>{% trans "Welcome to ScubaClub" %}</h2>
-    <p>{% trans "Organize your dives, grow your scuba club, and connect with fellow scuba enthusiasts!" %}</p>
+    <h2>{% trans  "Welcome to ScubaClub" %}</h2>
+    <p>{% trans  "Organize your dives, grow your scuba club, and connect with fellow scuba enthusiasts!" %}</p>
+
+{% comment %} {% get_language_info for LANGUAGE_CODE as current_lang %} 
+{{ current_lang.code }} {% endcomment %}
+
 {% endblock %}

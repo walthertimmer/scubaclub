@@ -49,3 +49,9 @@ compile translations
 ```bash
 django-admin compilemessages
 ```
+
+## static
+
+```bash
+python manage.py collectstatic
+```
