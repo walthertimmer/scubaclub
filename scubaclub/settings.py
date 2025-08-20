@@ -139,7 +139,7 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'scubaclub/locale'),
 ]
 
-TIME_ZONE = 'UTC+1'
+TIME_ZONE = 'Europe/Amsterdam'
 
 USE_I18N = True
 
