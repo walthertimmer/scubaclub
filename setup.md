@@ -6,12 +6,19 @@ setup env
 python3 -m venv env
 source env/bin/activate
 pip install django
+pip install pip-tools
 ```
 
 freeze req
 
 ```bash
 python -m pip freeze > requirements.txt
+```
+
+install req
+
+```bash
+pip install -r requirements.txt
 ```
 
 django setup
