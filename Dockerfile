@@ -17,17 +17,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies
 COPY requirements.txt /app/
-RUN pip install --upgrade pip 
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
 COPY . /app/
 
 # Expose port
-EXPOSE 8000
+EXPOSE ${PORT}
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:8000/health/ || exit 1
+  CMD curl -f http://localhost:${PORT:-8000}/health/ || exit 1
 
 # Start server
 CMD ["sh", "-c", "\
@@ -35,5 +35,5 @@ CMD ["sh", "-c", "\
     python manage.py makemigrations && \
     python manage.py migrate && \
     python manage.py collectstatic --noinput && \
-    gunicorn scubaclub.wsgi:application --bind 0.0.0.0:8000\
+    gunicorn scubaclub.wsgi:application --bind 0.0.0.0:${PORT:-8000}\
     "]

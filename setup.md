@@ -44,21 +44,50 @@ dependencies
 ## translation
 
 generate django translations
-(install https://mlocati.github.io/articles/gettext-iconv-windows.html)
+(install https://mlocati.github.io/articles/gettext-iconv-windows.html on windows)
+(or linux sudo apt update && sudo apt install gettext)
 
 ```bash
 django-admin makemessages -l nl
 django-admin makemessages -l en
 ```
 
+or linux for path issues
+
+```bash
+python manage.py makemessages -l en
+python manage.py makemessages -l nl
+```
+
 compile translations
 
 ```bash
 django-admin compilemessages
+python manage.py compilemessages
 ```
 
 ## static
 
 ```bash
 python manage.py collectstatic
+```
+
+## db setup
+
+Ensure the schema exists (custom command)
+
+```bash
+python manage.py ensure_schema
+```
+
+Run migrations
+
+```bash
+python manage.py migrate
+```
+
+Create superuser from environment variables (custom command)
+
+```bash
+python manage.py create_superuser
 ```

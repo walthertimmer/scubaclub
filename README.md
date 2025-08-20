@@ -1,10 +1,10 @@
 # scubaclub
 
-A simple site to organize scuba clubs
+A simple site to organize scuba clubs. Purpose is to easily allow scuba clubs to arange dives, organize the filling of equipment and other dive club related activities. All existing solutions are rather commercial and pricely for most scuba clubs that run on volunteers.
+
+Main focus for now is create something to facility my own club where I'm boardmember.
 
 ## Colours
-
-#50A paars
 
 Han Purple
 #5218fa
