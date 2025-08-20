@@ -32,4 +32,5 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('health/', views.health, name='health'),
 )

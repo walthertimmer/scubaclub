@@ -26,6 +26,9 @@ COPY . /app/
 # Expose port
 EXPOSE 8000
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8000/health/ || exit 1
+
 # Start server
 CMD ["sh", "-c", "\
     python manage.py ensure_schema && \
