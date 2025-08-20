@@ -37,7 +37,11 @@ else:
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 DJANGO_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", '')
-ALLOWED_HOSTS = ALLOWED_HOSTS = [host.strip().strip('"') for host in DJANGO_ALLOWED_HOSTS.split(',') if host.strip()]
+ALLOWED_HOSTS = [
+    host.strip().strip('"').strip("'")
+    for host in DJANGO_ALLOWED_HOSTS.split(',')
+    if host.strip().strip('"').strip("'")
+]
 
 # Application definition
 
