@@ -34,6 +34,7 @@ CMD ["sh", "-c", "\
     python manage.py ensure_schema && \
     python manage.py makemigrations && \
     python manage.py migrate && \
+    python manage.py compilemessages && \
     python manage.py collectstatic --noinput && \
     gunicorn scubaclub.wsgi:application --bind 0.0.0.0:${PORT:-8000}\
     "]
