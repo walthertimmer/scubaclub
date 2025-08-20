@@ -196,6 +196,7 @@ else:
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 # Static files storage
 if ENV == "prd":
     # Object Storage for static files
@@ -204,7 +205,8 @@ if ENV == "prd":
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "")
     AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL", "")
     AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "")
-    AWS_DEFAULT_ACL = None
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_STORAGE_CLASS = "ONEZONE_IA"
     AWS_S3_ADDRESSING_STYLE = "virtual"
     AWS_S3_SIGNATURE_VERSION = "s3v4"
 
@@ -223,6 +225,9 @@ if ENV == "prd":
                 "default_acl": AWS_DEFAULT_ACL,
                 "addressing_style": AWS_S3_ADDRESSING_STYLE,
                 "signature_version": AWS_S3_SIGNATURE_VERSION,
+                "object_parameters": {
+                    "StorageClass": AWS_STORAGE_CLASS,
+                },
             },
         },
         "staticfiles": {
@@ -236,6 +241,9 @@ if ENV == "prd":
                 "default_acl": AWS_DEFAULT_ACL,
                 "addressing_style": AWS_S3_ADDRESSING_STYLE,
                 "signature_version": AWS_S3_SIGNATURE_VERSION,
+                "object_parameters": {
+                    "StorageClass": AWS_STORAGE_CLASS,
+                },
             },
         },
     }
