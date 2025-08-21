@@ -1,5 +1,7 @@
 # setup
 
+## env setup
+
 setup env
 
 ```bash
@@ -7,6 +9,7 @@ python3 -m venv env
 source env/bin/activate
 pip install django
 pip install pip-tools
+python -m pip install "psycopg[binary]"
 ```
 
 freeze req
@@ -21,7 +24,7 @@ install req
 pip install -r requirements.txt
 ```
 
-django setup
+## django setup
 
 ```bash
 mkdir scubaclub
@@ -33,12 +36,6 @@ django debug
 
 ```bash
 python manage.py runserver
-```
-
-dependencies
-
-```bash
- python -m pip install "psycopg[binary]"
 ```
 
 ## translation

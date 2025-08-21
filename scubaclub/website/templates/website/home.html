@@ -8,7 +8,11 @@
     <h2>{% trans  "Welcome to ScubaClub" %}</h2>
     <p>{% trans  "Organize your dives, grow your scuba club, and connect with fellow scuba enthusiasts!" %}</p>
 
-{% comment %} {% get_language_info for LANGUAGE_CODE as current_lang %} 
-{{ current_lang.code }} {% endcomment %}
+    <ul>
+        <li>{% trans "Organize group and individual dives with your club and other divers." %}</li>
+        <li>{% trans "Find and share information about dive sites." %}</li>
+        <li>{% trans "Register your diving licenses and training, and discover who wants to join or organize training sessions." %}</li>
+        <li>{% trans "Share information and updates with club members." %}</li>
+    </ul>
 
 {% endblock %}

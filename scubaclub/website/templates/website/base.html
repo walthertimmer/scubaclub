@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
 {% load i18n %}
-<html lang="en">
+{% get_current_language as CURRENT_LANGUAGE_CODE %}
+<html lang="{{ CURRENT_LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}ScubaClub{% endblock %}</title>
@@ -12,7 +13,16 @@
     <header>
         <h1>ScubaClub</h1>
         <nav>
-            <!-- Add navigation links here -->
+            {% if user.is_authenticated %}
+                {% trans "Welcome," %} {{ user.username }} |
+                <form action="{% url 'website:logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-link">{% trans "Logout" %}</button>
+                </form>
+            {% else %}
+                <a href="{% url 'website:login' %}">{% trans "Login" %}</a> |
+                <a href="{% url 'website:register' %}">{% trans "Register" %}</a>
+            {% endif %}
         </nav>
 
         <form action="/i18n/setlang/" method="post">

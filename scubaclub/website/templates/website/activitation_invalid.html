@@ -1,0 +1,7 @@
+{% extends "website/base.html" %}
+{% block title %}Activation Failed - ScubaClub{% endblock %}
+{% block content %}
+  <h2>{% trans "Activation Failed" %}</h2>
+  <p>{% trans "The activation link is invalid or has expired." %}</p>
+  <a href="{% url 'website:register' %}">{% trans "Register again" %}</a>
+{% endblock %}
