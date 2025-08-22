@@ -1,0 +1,129 @@
+# .github/workflows/deploy.yml
+name: deploy
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.13'
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+        - name: Get runner public IP
+          id: ip
+          run: echo "ip=$(curl -s https://api.ipify.org)" >> $GITHUB_OUTPUT
+
+        - name: Add runner IP to Scaleway DB ACL
+          env:
+            SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+            SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
+            RDB_INSTANCE_ID: ${{ secrets.RDB_INSTANCE_ID }}
+          run: |
+            curl -X PATCH \
+                -H "X-Auth-Token: $SCW_SECRET_KEY" \
+                -H "Content-Type: application/json" \
+                "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acl" \
+                -d "{\"acl_rules\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}"
+
+        - name: Run migrations
+          env:
+            DJANGO_SETTINGS_MODULE: scubaclub.settings
+            ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+            EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+            EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+            EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+            EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+            EMAIL_SUBJECT_PREFIX: ${{ secrets.EMAIL_SUBJECT_PREFIX }}
+            SERVER_EMAIL: ${{ secrets.SERVER_EMAIL }}
+            DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_PORT: ${{ secrets.DB_PORT }}
+            DB_SEARCH_PATH: ${{ secrets.DB_SEARCH_PATH }}
+            DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+            DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+            DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+            DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+            DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+          run: |
+            python manage.py migrate
+
+        - name: Collect static files
+          env:
+            DJANGO_SETTINGS_MODULE: scubaclub.settings
+            ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+            EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+            EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+            EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+            EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+            EMAIL_SUBJECT_PREFIX: ${{ secrets.EMAIL_SUBJECT_PREFIX }}
+            SERVER_EMAIL: ${{ secrets.SERVER_EMAIL }}
+            DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_PORT: ${{ secrets.DB_PORT }}
+            DB_SEARCH_PATH: ${{ secrets.DB_SEARCH_PATH }}
+            DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+            DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+            DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+            DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+            DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+          run: |
+            python manage.py collectstatic --noinput
+
+        - name: Remove runner IP from Scaleway DB ACL
+          if: always()
+          env:
+            SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+            SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
+            RDB_INSTANCE_ID: ${{ secrets.RDB_INSTANCE_ID }}
+          run: |
+            # Fetch current ACL rules
+            curl -s -X GET \
+              -H "X-Auth-Token: $SCW_SECRET_KEY" \
+              "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acl" \
+              > acl.json
+
+            # Remove runner IP from rules
+            jq --arg ip "${{ steps.ip.outputs.ip }}" \
+              '.acl_rules |= map(select(.ip != $ip))' acl.json > new_acl.json
+
+            # Update ACL with filtered rules
+            curl -X PATCH \
+              -H "X-Auth-Token: $SCW_SECRET_KEY" \
+              -H "Content-Type: application/json" \
+              "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acl" \
+              -d @new_acl.json
+
+        # https://www.scaleway.com/en/developers/api/serverless-containers/
+        - name: (re)deploy container
+          env:
+            SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+            SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
+            CONTAINER_ID: ${{ secrets.CONTAINER_ID }}
+          run: |
+            curl -X POST \
+                -H "X-Auth-Token: $SCW_SECRET_KEY" \
+                "https://api.scaleway.com/containers/v1beta1/regions/$SCW_DEFAULT_REGION/containers/$CONTAINER_ID/deploy" \
+                -d "{}"

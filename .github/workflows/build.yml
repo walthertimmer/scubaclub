@@ -1,5 +1,5 @@
 # .github/workflows/build.yml
-name: Build
+name: build
 
 on:
   push:
@@ -33,3 +33,18 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
+
+      - name: Delete old Docker image tags (keep last 3)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="${{ github.repository }}"
+          IMAGE="ghcr.io/$REPO"
+          TAGS=$(gh api -H "Accept: application/vnd.github+json" "/users/${{ github.repository_owner }}/packages/container/${REPO#*/}/versions" | jq -r '.[].metadata.container.tags[]' | grep -v latest | head -n -3)
+          for tag in $TAGS; do
+            echo "Deleting tag: $tag"
+            gh api --method DELETE "/users/${{ github.repository_owner }}/packages/container/${REPO#*/}/versions/$tag"
+          done

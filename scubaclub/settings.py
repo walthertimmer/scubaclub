@@ -251,7 +251,8 @@ if ENV == "prd":
     MEDIA_ROOT = None  # Not needed for S3
 else:
     # Local static files storage for development
-    STATIC_URL = 'static/'
+    STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-    MEDIA_URL = 'media/'
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/website'),]
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
