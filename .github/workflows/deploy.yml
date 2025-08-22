@@ -42,6 +42,9 @@ jobs:
                 -d "{\"rules\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
                 "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acls"
 
+        - name: Wait for ACL propagation
+          run: sleep 10
+
         - name: Run migrations
           env:
             DJANGO_SETTINGS_MODULE: scubaclub.settings
