@@ -30,6 +30,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy source code
+COPY . .
+
+# Compile translations
+RUN python manage.py compilemessages
+
 # Stage 2: Production stage
 FROM python:3.13-slim
 
@@ -41,6 +47,9 @@ RUN useradd -m -r appuser && \
 # Copy the Python dependencies from the builder stage
 COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
+
+# copy translations
+COPY --from=builder /app/scubaclub/locale /app/scubaclub/locale
 
 # Set the working directory
 WORKDIR /app
