@@ -30,11 +30,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-# COPY requirements.txt /app/
-# RUN pip install --upgrade pip
-# RUN pip install --no-cache-dir -r requirements.txt
-
 # Stage 2: Production stage
 FROM python:3.13-slim
 
@@ -60,9 +55,6 @@ ENV PYTHONUNBUFFERED=1
 # Switch to non-root user
 USER appuser
 
-# Copy project files
-# COPY . /app/
-
 # Expose the application port
 EXPOSE ${PORT:-8000}
 
@@ -70,13 +62,13 @@ EXPOSE ${PORT:-8000}
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:${PORT:-8000}/health/ || exit 1
 
-# Start Django application using Gunicorn
+### Start Django application using Gunicorn
+# python manage.py ensure_schema && \
+# python manage.py makemigrations && \
+# python manage.py migrate && \
+# python manage.py compilemessages && \
+# python manage.py collectstatic --noinput && \
 CMD ["sh", "-c", "\
-    python manage.py ensure_schema && \
-    python manage.py makemigrations && \
-    python manage.py migrate && \
-    python manage.py compilemessages && \
-    python manage.py collectstatic --noinput && \
     gunicorn scubaclub.wsgi:application\
      --bind 0.0.0.0:${PORT:-8000}\
      --workers=2 --threads=4 --timeout=0\
