@@ -43,7 +43,7 @@ jobs:
                 "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acls"
 
         - name: Wait for ACL propagation
-          run: sleep 10
+          run: sleep 20
 
         - name: ensure_schema
           env:
