@@ -125,7 +125,7 @@ jobs:
             SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
             CONTAINER_ID: ${{ secrets.CONTAINER_ID }}
           run: |
-            curl -X POST \
+            curl -i -X POST \
                 -H "X-Auth-Token: $SCW_SECRET_KEY" \
                 "https://api.scaleway.com/containers/v1beta1/regions/$SCW_DEFAULT_REGION/containers/$CONTAINER_ID/deploy" \
                 -d "{}"
