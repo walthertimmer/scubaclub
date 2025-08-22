@@ -36,14 +36,14 @@ jobs:
             SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
             RDB_INSTANCE_ID: ${{ secrets.RDB_INSTANCE_ID }}
           run: |
-            curl -i -X POST \
+            curl -X POST \
                 -H "X-Auth-Token: $SCW_SECRET_KEY" \
                 -H "Content-Type: application/json" \
                 -d "{\"rules\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
                 "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acls"
 
         - name: Wait for ACL propagation
-          run: sleep 20
+          run: sleep 10
 
         - name: ensure_schema
           env:
@@ -142,7 +142,7 @@ jobs:
             SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
             RDB_INSTANCE_ID: ${{ secrets.RDB_INSTANCE_ID }}
           run: |
-            curl -i -X DELETE \
+            curl -X DELETE \
               -H "X-Auth-Token: $SCW_SECRET_KEY" \
               -H "Content-Type: application/json" \
               -d "{\"acl_rule_ips\":[\"${{ steps.ip.outputs.ip }}\"]}" \
