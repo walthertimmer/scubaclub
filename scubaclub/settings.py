@@ -12,7 +12,23 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+import logging
+from datetime import datetime
 from dotenv import load_dotenv
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+logger = logging.getLogger("scubaclub")
+
+
+def log(msg):
+    """Log a message with timestamp."""
+    logger.info(msg)
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -21,7 +37,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV = os.getenv("ENVIRONMENT", "prd")
-print(f"Environment: {ENV}")
+log(f"Environment: {ENV}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -31,7 +47,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if ENV == "dev":
-    print("Running in development mode")
+    log("Running in development (debug) mode")
     DEBUG = True
 else:
     DEBUG = False
@@ -108,6 +124,7 @@ DATABASES = {
     }
 }
 
+log(f"Trying to connect to database {DATABASES['default']['NAME']} ")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -151,7 +168,6 @@ TIME_ZONE = 'Europe/Amsterdam'
 USE_I18N = True
 
 USE_TZ = True
-
 
 
 # Default primary key field type
@@ -256,3 +272,7 @@ else:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/website'),]
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+log(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+log(f"STATIC_URL: {locals().get('STATIC_URL', None)}")
+log(f"EMAIL_BACKEND: {locals().get('EMAIL_BACKEND', None)}")

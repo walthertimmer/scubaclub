@@ -15,13 +15,21 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm
+import logging
+
+
+logger = logging.getLogger("scubaclub.views")
 
 
 def home(request):
+    """Render the home page."""
+    user_display = request.user if request.user.is_authenticated else "Anonymous"
+    logger.info("Home view accessed by user: %s", user_display)
     return render(request, "website/home.html")
 
 
 def health(request):
+    """Health check endpoint."""
     return HttpResponse("OK", content_type="text/plain")
 
 
