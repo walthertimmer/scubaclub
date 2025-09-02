@@ -59,7 +59,7 @@ COPY --chown=appuser:appuser . .
 
 # Set environment variables to optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 
 # Switch to non-root user
 USER appuser
@@ -71,14 +71,25 @@ EXPOSE ${PORT:-8000}
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:${PORT:-8000}/health/ || exit 1
 
+# Create entrypoint script for init tasks
+COPY --chown=appuser:appuser docker_entrypoint_init.sh /app/
+RUN chmod +x /app/docker_entrypoint_init.sh
+
+# Create entrypoint script for main app
+COPY --chown=appuser:appuser docker_entrypoint.sh /app/
+RUN chmod +x /app/docker_entrypoint.sh
+
+# Default command for main container
+CMD ["/app/docker_entrypoint.sh"]
+
 ### Start Django application using Gunicorn
 # python manage.py ensure_schema && \
 # python manage.py makemigrations && \
 # python manage.py migrate && \
 # python manage.py compilemessages && \
 # python manage.py collectstatic --noinput && \
-CMD ["sh", "-c", "\
-    gunicorn scubaclub.wsgi:application\
-     --bind 0.0.0.0:${PORT:-8000}\
-     --workers=1 --threads=4 --timeout=60\
-    "]
+# CMD ["sh", "-c", "\
+#     gunicorn scubaclub.wsgi:application\
+#      --bind 0.0.0.0:${PORT:-8000}\
+#      --workers=1 --threads=4 --timeout=60\
+#     "]
