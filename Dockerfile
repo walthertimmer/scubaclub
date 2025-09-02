@@ -61,6 +61,14 @@ COPY --chown=appuser:appuser . .
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Create entrypoint script for init tasks
+COPY --chown=appuser:appuser docker_entrypoint_init.sh /app/
+RUN chmod +x /app/docker_entrypoint_init.sh
+
+# Create entrypoint script for main app
+COPY --chown=appuser:appuser docker_entrypoint.sh /app/
+RUN chmod +x /app/docker_entrypoint.sh
+
 # Switch to non-root user
 USER appuser
 
@@ -70,14 +78,6 @@ EXPOSE ${PORT:-8000}
 # define healthcheck with curl
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://localhost:${PORT:-8000}/health/ || exit 1
-
-# Create entrypoint script for init tasks
-COPY --chown=appuser:appuser docker_entrypoint_init.sh /app/
-RUN chmod +x /app/docker_entrypoint_init.sh
-
-# Create entrypoint script for main app
-COPY --chown=appuser:appuser docker_entrypoint.sh /app/
-RUN chmod +x /app/docker_entrypoint.sh
 
 # Default command for main container
 CMD ["/app/docker_entrypoint.sh"]
