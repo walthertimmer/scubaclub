@@ -16,103 +16,66 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
-        - name: Set up Python
-          uses: actions/setup-python@v5
-          with:
-            python-version: '3.13'
+        # - name: Set up Python
+        #   uses: actions/setup-python@v5
+        #   with:
+        #     python-version: '3.13'
 
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
+        # - name: Install dependencies
+        #   run: |
+        #     python -m pip install --upgrade pip
+        #     pip install -r requirements.txt
 
         - name: Get runner public IP
           id: ip
           run: echo "ip=$(curl -s https://api.ipify.org)" >> $GITHUB_OUTPUT
 
-        # https://www.scaleway.com/en/developers/api/managed-database-postgre-mysql/#path-acls-add-an-acl-rule-to-a-database-instance
-        - name: Add runner IP to Scaleway DB ACL
+        # https://www.scaleway.com/en/developers/api/kubernetes/#path-access-control-list-add-new-acls
+        - name: Add runner IP to Scaleway K8s ACL
           env:
             SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
             SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
-            RDB_INSTANCE_ID: ${{ secrets.RDB_INSTANCE_ID }}
+            K8S_CLUSTER_ID: ${{ secrets.K8S_CLUSTER_ID }}
           run: |
             curl -X POST \
-                -H "X-Auth-Token: $SCW_SECRET_KEY" \
-                -H "Content-Type: application/json" \
-                -d "{\"rules\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
-                "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acls"
+              -H "X-Auth-Token: $SCW_SECRET_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{\"rules\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
+              "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls"
 
         - name: Wait for ACL propagation
           run: sleep 10
 
-        - name: django commands
-          env:
-            DJANGO_SETTINGS_MODULE: scubaclub.settings
-            ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-            EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
-            EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
-            EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
-            EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
-            EMAIL_SUBJECT_PREFIX: ${{ secrets.EMAIL_SUBJECT_PREFIX }}
-            SERVER_EMAIL: ${{ secrets.SERVER_EMAIL }}
-            DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
-            DB_NAME: ${{ secrets.DB_NAME }}
-            DB_USER: ${{ secrets.DB_USER }}
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_HOST: ${{ secrets.DB_HOST }}
-            DB_PORT: ${{ secrets.DB_PORT }}
-            DB_SEARCH_PATH: ${{ secrets.DB_SEARCH_PATH }}
-            DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-            DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
-            DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
-            DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
-            DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
-            AWS_S3_ENDPOINT_URL: ${{ secrets.AWS_S3_ENDPOINT_URL }}
-            AWS_S3_REGION_NAME: ${{ secrets.AWS_S3_REGION_NAME }}
+        - name: Set up kubectl
           run: |
-            echo "python manage.py ensure_schema"
-            python manage.py ensure_schema
-            
-            echo "python manage.py migrate"
-            python manage.py migrate
-            
-            echo "python manage.py create_superuser"
-            python manage.py create_superuser
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/
 
-            echo "python manage.py collectstatic --noinput"
-            python manage.py collectstatic --noinput
+        - name: Configure kubeconfig
+          env:
+            KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG_CONTENT }}
+          run: |
+            echo "$KUBECONFIG_CONTENT" > kubeconfig
+            export KUBECONFIG=$PWD/kubeconfig
+          
+        - name: Rollout restart deployment
+          run: |
+            kubectl rollout restart deployment scubaclub -n scubaclub
 
-        - name: Remove runner IP from Scaleway DB ACL
+        - name: Force delete kubectl binary
+          run: |
+            sudo rm -f /usr/local/bin/kubectl
+
+        - name: Remove runner IP from Scaleway K8s ACL
           if: always()
           env:
             SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
             SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
-            RDB_INSTANCE_ID: ${{ secrets.RDB_INSTANCE_ID }}
+            K8S_CLUSTER_ID: ${{ secrets.K8S_CLUSTER_ID }}
           run: |
             curl -X DELETE \
               -H "X-Auth-Token: $SCW_SECRET_KEY" \
               -H "Content-Type: application/json" \
               -d "{\"acl_rule_ips\":[\"${{ steps.ip.outputs.ip }}\"]}" \
-              "https://api.scaleway.com/rdb/v1/regions/$SCW_DEFAULT_REGION/instances/$RDB_INSTANCE_ID/acls"
-
-        # https://www.scaleway.com/en/developers/api/serverless-containers/
-        - name: (re)deploy container
-          env:
-            SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-            SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
-            CONTAINER_ID: ${{ secrets.CONTAINER_ID }}
-          run: |
-            curl -X POST \
-                -H "X-Auth-Token: $SCW_SECRET_KEY" \
-                "https://api.scaleway.com/containers/v1beta1/regions/$SCW_DEFAULT_REGION/containers/$CONTAINER_ID/deploy" \
-                -d "{}"
-    
-    # deploy-prd:
-    #     runs-on: ubuntu-latest
-    #     environment: prd
-    #     needs: dev
-    #     steps:
+              "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls"
