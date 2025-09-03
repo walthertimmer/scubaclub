@@ -40,7 +40,7 @@ jobs:
             curl -X POST \
               -H "X-Auth-Token: $SCW_SECRET_KEY" \
               -H "Content-Type: application/json" \
-              -d "{\"rules\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
+              -d "{\"acls\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
               "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls"
 
         - name: Wait for ACL propagation
@@ -56,26 +56,40 @@ jobs:
           env:
             KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG_CONTENT }}
           run: |
-            echo "$KUBECONFIG_CONTENT" > kubeconfig
-            export KUBECONFIG=$PWD/kubeconfig
+            echo "$KUBECONFIG_CONTENT" > $HOME/kubeconfig
+            echo "KUBECONFIG=$HOME/kubeconfig" >> $GITHUB_ENV
           
         - name: Rollout restart deployment
           run: |
             kubectl rollout restart deployment scubaclub -n scubaclub
 
-        - name: Force delete kubectl binary
+        - name: Force delete kubeconfig
           run: |
-            sudo rm -f /usr/local/bin/kubectl
+            sudo rm -f $HOME/kubeconfig
+
+        - name: Get ACL rule ID for runner IP
+          id: acl_id
+          env:
+            SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+            SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
+            K8S_CLUSTER_ID: ${{ secrets.K8S_CLUSTER_ID }}
+          run: |
+            acl_id=$(curl -s -X GET \
+              -H "X-Auth-Token: $SCW_SECRET_KEY" \
+              "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls" \
+              | jq -r --arg ip "${{ steps.ip.outputs.ip }}" '.rules[] | select(.ip==$ip) | .id')
+            echo "acl_id=$acl_id" >> $GITHUB_OUTPUT
 
         - name: Remove runner IP from Scaleway K8s ACL
           if: always()
           env:
             SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
             SCW_DEFAULT_REGION: ${{ secrets.SCW_DEFAULT_REGION }}
-            K8S_CLUSTER_ID: ${{ secrets.K8S_CLUSTER_ID }}
           run: |
-            curl -X DELETE \
-              -H "X-Auth-Token: $SCW_SECRET_KEY" \
-              -H "Content-Type: application/json" \
-              -d "{\"acl_rule_ips\":[\"${{ steps.ip.outputs.ip }}\"]}" \
-              "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls"
+            if [ -n "${{ steps.acl_id.outputs.acl_id }}" ]; then
+              curl -X DELETE \
+                -H "X-Auth-Token: $SCW_SECRET_KEY" \
+                "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/acls/${{ steps.acl_id.outputs.acl_id }}"
+            else
+              echo "No ACL rule found for runner IP"
+            fi
