@@ -6,6 +6,10 @@ on:
     branches: [ main, master ]
     paths:
       - 'scubaclub/**'
+      - 'Dockerfile'
+      - '.github/workflows/build.yml'
+      - 'docker_entrypoint.sh'
+      - 'docker_entrypoint_init.sh'
   workflow_dispatch:
 
 permissions:
