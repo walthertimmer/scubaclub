@@ -40,7 +40,7 @@ jobs:
             curl -X POST \
               -H "X-Auth-Token: $SCW_SECRET_KEY" \
               -H "Content-Type: application/json" \
-              -d "{\"acls\":[{\"ip\":\"${{ steps.ip.outputs.ip }}\",\"description\":\"github-actions-runner\"}]}" \
+              -d "{\"acls\":[{\"ip\":\"${{ steps.ip.outputs.ip }}/32\",\"description\":\"github-actions-runner\"}]}" \
               "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls"
 
         - name: Wait for ACL propagation
@@ -78,7 +78,7 @@ jobs:
             acl_id=$(curl -s -X GET \
               -H "X-Auth-Token: $SCW_SECRET_KEY" \
               "https://api.scaleway.com/k8s/v1/regions/$SCW_DEFAULT_REGION/clusters/$K8S_CLUSTER_ID/acls" \
-              | jq -r --arg ip "${{ steps.ip.outputs.ip }}" '.rules[] | select(.ip==$ip) | .id')
+              | jq -r --arg ip "${{ steps.ip.outputs.ip }}/32" '.rules[] | select(.ip==$ip) | .id')
             echo "acl_id=$acl_id" >> $GITHUB_OUTPUT
 
         - name: Remove runner IP from Scaleway K8s ACL
