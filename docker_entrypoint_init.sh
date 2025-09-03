@@ -10,9 +10,6 @@ python manage.py ensure_schema
 echo "python manage.py migrate"
 python manage.py migrate
 
-echo "python manage.py compilemessages"
-python manage.py compilemessages
-
 echo "python manage.py create_superuser"
 python manage.py create_superuser
 
