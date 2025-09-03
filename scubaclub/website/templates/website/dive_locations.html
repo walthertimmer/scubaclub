@@ -1,0 +1,15 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive Locations" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Dive Locations" %}</h2>
+<ul>
+    {% for location in locations %}
+    <li>{{ location.name }} - {{ location.description }}</li>
+    {% empty %}
+    <li>{% trans "No dive locations available." %}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

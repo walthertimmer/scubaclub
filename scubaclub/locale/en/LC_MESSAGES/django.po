@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-21 13:49+0200\n"
+"POT-Creation-Date: 2025-09-03 17:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,10 +26,18 @@ msgstr ""
 msgid "Only letters and numbers are allowed in the username."
 msgstr ""
 
+#: .\scubaclub\website\models.py:16
+msgid "English"
+msgstr ""
+
+#: .\scubaclub\website\models.py:17
+msgid "Dutch"
+msgstr ""
+
 #: .\scubaclub\website\templates\registration\login.html:4
 #: .\scubaclub\website\templates\registration\login.html:7
 #: .\scubaclub\website\templates\registration\login.html:11
-#: .\scubaclub\website\templates\website\base.html:15
+#: .\scubaclub\website\templates\website\base.html:26
 msgid "Login"
 msgstr ""
 
@@ -45,12 +53,137 @@ msgstr ""
 msgid "Register again"
 msgstr ""
 
-#: .\scubaclub\website\templates\website\base.html:16
+#: .\scubaclub\website\templates\website\base.html:20
+msgid "Welcome,"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\base.html:23
+msgid "Logout"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\base.html:27
 msgid "Register"
 msgstr ""
 
-#: .\scubaclub\website\templates\website\base.html:28
+#: .\scubaclub\website\templates\website\base.html:29
+#: .\scubaclub\website\templates\website\dive_clubs.html:4
+#: .\scubaclub\website\templates\website\dive_clubs.html:7
+msgid "Dive Clubs"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\base.html:30
+#: .\scubaclub\website\templates\website\upcoming_dives.html:4
+#: .\scubaclub\website\templates\website\upcoming_dives.html:7
+msgid "Upcoming Dives"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\base.html:31
+#: .\scubaclub\website\templates\website\club_detail.html:92
+#: .\scubaclub\website\templates\website\dive_locations.html:4
+#: .\scubaclub\website\templates\website\dive_locations.html:7
+msgid "Dive Locations"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\base.html:44
 msgid "Change language"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:4
+msgid "Dive Club Details"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:7
+msgid "Dive Club: "
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:10
+msgid "Description:"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:14
+msgid "Admins:"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:24
+msgid "Request to Join"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:29
+msgid "Your request to join is pending approval."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:33
+msgid "You are a member of this club."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:37
+msgid "Pending Members"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:44
+msgid "Approve"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:50
+msgid "No pending members."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:53
+#: .\scubaclub\website\templates\website\club_detail.html:69
+msgid "Members"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:60
+msgid "Remove"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:66
+#: .\scubaclub\website\templates\website\club_detail.html:77
+msgid "No members yet."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:81
+msgid "Upcoming Events"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:89
+msgid "No upcoming events."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:100
+msgid "No associated locations."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\club_detail.html:103
+msgid "Back to Clubs"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\create_dive_club.html:4
+msgid "Create Dive Club"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\create_dive_club.html:7
+msgid "Create a New Dive Club"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\create_dive_club.html:11
+msgid "Create Club"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\dive_clubs.html:9
+msgid "Create a new dive club"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\dive_clubs.html:11
+msgid "Please log in to create your own dive club."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\dive_clubs.html:17
+msgid "No dive clubs available."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\dive_locations.html:12
+msgid "No dive locations available."
 msgstr ""
 
 #: .\scubaclub\website\templates\website\home.html:8
@@ -59,6 +192,126 @@ msgstr ""
 
 #: .\scubaclub\website\templates\website\home.html:9
 msgid ""
-"Organize your dives, grow your scuba club, and connect with fellow scuba "
-"enthusiasts!"
+"The complete platform for scuba diving clubs and enthusiasts. Organize "
+"dives, manage training, and build your diving community!"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:11
+msgid "What you can do with ScubaClub:"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:14
+msgid "Organize Dives"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:15
+msgid ""
+"Plan group and individual dives with your club members and other diving "
+"enthusiasts. Set dates, locations, and manage participants."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:19
+msgid "Discover Dive Sites"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:20
+msgid ""
+"Find detailed information about dive sites worldwide. Share your experiences "
+"and read reviews from other divers."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:23
+msgid "Manage Training & Certifications"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:24
+msgid ""
+"Keep track of your diving licenses and training progress. Find training "
+"partners and organize certification courses."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:27
+msgid "Club Communication"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:28
+msgid ""
+"Stay connected with your club members through announcements, updates, and "
+"community discussions."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:31
+msgid "Equipment Management"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:32
+msgid ""
+"Organize equipment sharing, tank filling schedules, and maintenance "
+"reminders for your club."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:38
+msgid "Ready to dive in?"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:39
+msgid ""
+"Join ScubaClub today and start organizing amazing diving experiences with "
+"your community."
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:40
+msgid "Get Started"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:41
+msgid "Sign In"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:45
+msgid "Welcome back"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\home.html:46
+msgid "Ready for your next diving adventure?"
+msgstr ""
+
+#: .\scubaclub\website\templates\website\upcoming_dives.html:12
+msgid "No upcoming dives."
+msgstr ""
+
+#: .\scubaclub\website\urls.py:13
+msgid "register/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:14
+msgid "activate/<uidb64>/<token>/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:15
+msgid "login/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:16
+msgid "logout/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:17
+msgid "registration_complete/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:20
+msgid "dive_clubs/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:21
+msgid "upcoming_dives/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:22
+msgid "dive_locations/"
+msgstr ""
+
+#: .\scubaclub\website\urls.py:23
+msgid "club/<int:club_id>/"
 msgstr ""

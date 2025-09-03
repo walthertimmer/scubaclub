@@ -1,0 +1,13 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create Dive Club" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Create a New Dive Club" %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% trans "Create Club" %}</button>
+</form>
+{% endblock %}

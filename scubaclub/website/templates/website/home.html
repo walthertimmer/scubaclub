@@ -6,13 +6,46 @@
 
 {% block content %}
     <h2>{% trans  "Welcome to ScubaClub" %}</h2>
-    <p>{% trans  "Organize your dives, grow your scuba club, and connect with fellow scuba enthusiasts!" %}</p>
+    <p>{% trans "The complete platform for scuba diving clubs and enthusiasts. Organize dives, manage training, and build your diving community!" %}</p>
 
-    <ul>
-        <li>{% trans "Organize group and individual dives with your club and other divers." %}</li>
-        <li>{% trans "Find and share information about dive sites." %}</li>
-        <li>{% trans "Register your diving licenses and training, and discover who wants to join or organize training sessions." %}</li>
-        <li>{% trans "Share information and updates with club members." %}</li>
+    <h3>{% trans "What you can do with ScubaClub:" %}</h3>
+    <ul class="feature-list">
+        <li>
+            <strong>{% trans "Organize Dives" %}</strong><br>
+            {% trans "Plan group and individual dives with your club members and other diving enthusiasts. Set dates, locations, and manage participants." %}
+            <br>
+        </li>
+        <li>
+            <strong>{% trans "Discover Dive Sites" %}</strong><br>
+            {% trans "Find detailed information about dive sites worldwide. Share your experiences and read reviews from other divers." %}
+        </li>
+        <li>
+            <strong>{% trans "Manage Training & Certifications" %}</strong><br>
+            {% trans "Keep track of your diving licenses and training progress. Find training partners and organize certification courses." %}
+        </li>
+        <li>
+            <strong>{% trans "Club Communication" %}</strong><br>
+            {% trans "Stay connected with your club members through announcements, updates, and community discussions." %}
+        </li>
+        <li>
+            <strong>{% trans "Equipment Management" %}</strong><br>
+            {% trans "Organize equipment sharing, tank filling schedules, and maintenance reminders for your club." %}
+        </li>
     </ul>
+
+    {% if not user.is_authenticated %}
+    <div class="cta-section">
+        <h3>{% trans "Ready to dive in?" %}</h3>
+        <p>{% trans "Join ScubaClub today and start organizing amazing diving experiences with your community." %}</p>
+        <a href="{% url 'website:register' %}" class="cta-button">{% trans "Get Started" %}</a>
+        <a href="{% url 'website:login' %}" class="cta-button">{% trans "Sign In" %}</a>
+    </div>
+    {% else %}
+    <div class="cta-section">
+        <h3>{% trans "Welcome back" %}, {{ user.username }}!</h3>
+        <p>{% trans "Ready for your next diving adventure?" %}</p>
+        <!-- Add links to main features once implemented -->
+    </div>
+    {% endif %}
 
 {% endblock %}

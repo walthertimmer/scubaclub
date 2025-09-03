@@ -1,6 +1,7 @@
 """
 Main views for the Scuba Club website.
 """
+import logging
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 from django.utils import translation
@@ -14,8 +15,12 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomUserCreationForm
-import logging
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseForbidden
+from .models import DiveClub, DiveEvent, DiveLocation
+from .forms import CustomUserCreationForm, DiveClubForm
 
 
 logger = logging.getLogger("scubaclub.views")
@@ -82,3 +87,84 @@ class CustomLoginView(LoginView):
 
 class CustomLogoutView(LogoutView):
     next_page = '/'
+
+
+def dive_clubs(request):
+    """Render the dive clubs page."""
+    clubs = DiveClub.get_for_current_language()
+    return render(request, "website/dive_clubs.html", {"clubs": clubs})
+
+
+def upcoming_dives(request):
+    """Render the upcoming dives page."""
+    dives = DiveEvent.get_for_current_language().filter(date__gte=timezone.now())
+    return render(request, "website/upcoming_dives.html", {"dives": dives})
+
+
+def dive_locations(request):
+    """Render the dive locations page."""
+    locations = DiveLocation.get_for_current_language()
+    return render(request, "website/dive_locations.html", {"locations": locations})
+
+
+# @login_required
+def club_detail(request, club_slug):
+    """Render the detail page for a specific dive club."""
+    club = get_object_or_404(DiveClub, slug=club_slug)
+    # Optional: Add logic to restrict access (e.g., only members or admins can view)
+    # if request.user not in club.members.all() and request.user not in club.admins.all():
+    #     return HttpResponseForbidden("You do not have permission to view this club.")
+    context = {
+        'club': club,
+        'members': club.members.all(),
+        'admins': club.admins.all(),
+        'pending_members': club.pending_members.all(),
+    }
+    return render(request, "website/club_detail.html", context)
+
+
+@login_required
+def request_join_club(request, club_id):
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.method == 'POST':
+        club.pending_members.add(request.user)
+        # Optionally, send notification to admins
+    return redirect('website:club_detail', club_slug=club.slug)
+
+
+@login_required
+def approve_member(request, club_id, user_id):
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+    user = get_object_or_404(User, pk=user_id)
+    if user in club.pending_members.all():
+        club.pending_members.remove(user)
+        club.members.add(user)
+    return redirect('website:club_detail', club_slug=club.slug)
+
+
+@login_required
+def remove_member(request, club_id, user_id):
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+    user = get_object_or_404(User, pk=user_id)
+    if user in club.members.all():
+        club.members.remove(user)
+    return redirect('website:club_detail', club_slug=club.slug)
+
+
+@login_required
+def create_dive_club(request):
+    if request.method == 'POST':
+        form = DiveClubForm(request.POST)
+        if form.is_valid():
+            club = form.save(commit=False)
+            club.created_by = request.user
+            club.save()
+            return redirect('website:club_detail', club_slug=club.slug)
+    else:
+        form = DiveClubForm()
+    return render(request, 'website/create_dive_club.html', {'form': form})
+

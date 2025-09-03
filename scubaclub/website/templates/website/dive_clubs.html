@@ -1,0 +1,20 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive Clubs" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Dive Clubs" %}</h2>
+{% if user.is_authenticated %}
+    <p><a href="{% url 'website:create_dive_club' %}">{% trans "Create a new dive club" %}</a></p>
+{% else %}
+    <p>{% trans "Please log in to create your own dive club." %}</p>
+{% endif %}
+<ul>
+    {% for club in clubs %}
+    <li><a href="{% url 'website:club_detail' club_slug=club.slug %}">{{ club.name }}</a> - {{ club.description }}</li>
+    {% empty %}
+    <li>{% trans "No dive clubs available." %}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

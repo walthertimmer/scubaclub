@@ -1,0 +1,15 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Upcoming Dives" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Upcoming Dives" %}</h2>
+<ul>
+    {% for dive in dives %}
+    <li>{{ dive.title }} - {{ dive.date|date:"F j, Y" }} at {{ dive.dive_location.name }}</li>
+    {% empty %}
+    <li>{% trans "No upcoming dives." %}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
