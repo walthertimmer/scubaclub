@@ -64,6 +64,7 @@ jobs:
             kubectl rollout restart deployment scubaclub -n scubaclub
 
         - name: Force delete kubeconfig
+          if: always()
           run: |
             sudo rm -f $HOME/kubeconfig
 
