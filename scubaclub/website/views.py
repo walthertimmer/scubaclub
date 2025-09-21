@@ -4,6 +4,7 @@ Main views for the Scuba Club website.
 import logging
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
+from django.utils.translation import get_language
 from django.utils import translation
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -19,8 +20,8 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseForbidden
-from .models import DiveClub, DiveEvent, DiveLocation
-from .forms import CustomUserCreationForm, DiveClubForm
+from .models import DiveClub, DiveEvent, DiveLocation, Language
+from .forms import CustomUserCreationForm, DiveClubForm, DiveEventForm
 
 
 logger = logging.getLogger("scubaclub.views")
@@ -39,6 +40,9 @@ def health(request):
 
 
 def register(request):
+    """
+    Handle user registration with email verification.\
+    """
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -119,6 +123,7 @@ def club_detail(request, club_slug):
         'members': club.members.all(),
         'admins': club.admins.all(),
         'pending_members': club.pending_members.all(),
+        'club_events': club.events.filter(date__gte=timezone.now()),
     }
     return render(request, "website/club_detail.html", context)
 
@@ -168,3 +173,45 @@ def create_dive_club(request):
         form = DiveClubForm()
     return render(request, 'website/create_dive_club.html', {'form': form})
 
+
+@login_required
+def create_dive(request, club_id):
+    """Create a new dive event for a specific club."""
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+    if request.method == 'POST':
+        form = DiveEventForm(request.POST)
+        if form.is_valid():
+            dive = form.save(commit=False)
+            dive.organizer = request.user
+            dive.club = club  # Associate with the club
+            dive.language = club.language  # Inherit club's language
+            dive.save()
+            return redirect('website:club_detail', club_slug=club.slug)
+    else:
+        form = DiveEventForm()
+    return render(request, 'website/create_dive.html', {'form': form, 'club': club})
+
+
+@login_required
+def create_open_dive(request):
+    if request.method == 'POST':
+        form = DiveEventForm(request.POST)
+        if form.is_valid():
+            dive = form.save(commit=False)
+            dive.organizer = request.user
+            dive.club = None  # No club association
+            dive.language = Language.objects.get(code=get_language())  # Set to current language
+            dive.save()
+            return redirect('website:upcoming_dives')
+    else:
+        form = DiveEventForm()
+    return render(request, 'website/create_dive.html', {'form': form, 'club': None})  # Reuse template, pass club=None
+
+
+@login_required
+def event_detail(request, event_id):
+    event = get_object_or_404(DiveEvent, pk=event_id)
+    # Optional: Add join/leave logic here (e.g., if POST and not full, add/remove user from participants)
+    return render(request, 'website/event_detail.html', {'event': event})

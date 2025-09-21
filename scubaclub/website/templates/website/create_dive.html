@@ -1,0 +1,13 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create Dive" %}{% endblock %}
+
+{% block content %}
+<h2>{% if club %}{% trans "Create a New Dive for" %} {{ club.name }}{% else %}{% trans "Create an Open Dive" %}{% endif %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% trans "Create Dive" %}</button>
+</form>
+{% endblock %}

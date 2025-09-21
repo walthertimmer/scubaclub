@@ -92,3 +92,9 @@ create slugs
 ```bash
 python manage.py create_slugs
 ```
+
+make sure language codes are loaded
+
+```bash
+python manage.py create_languages
+```

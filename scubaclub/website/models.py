@@ -21,7 +21,7 @@ class Language(models.Model):
 
     def __str__(self):
         return self.code
-    
+
 
 class DiveLocation(models.Model):
     name = models.CharField(max_length=255)
@@ -35,7 +35,7 @@ class DiveLocation(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        
+
     def __str__(self):
         return f"{self.name} ({self.language})"
 
@@ -66,8 +66,8 @@ class DiveClub(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.language})"
-    
-    def save(self, *args, **kwargs):        
+
+    def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
             # Optional: Handle uniqueness conflicts (e.g., append ID if slug exists)
@@ -86,18 +86,22 @@ class DiveClub(models.Model):
         """Get dive clubs for the current language"""
         current_lang = get_language()
         return cls.objects.filter(language__code=current_lang)
-    
+
 
 class DiveEvent(models.Model):
+    """
+    A group dive
+    """
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     dive_location = models.ForeignKey(DiveLocation, on_delete=models.CASCADE)
     date = models.DateTimeField()
-    max_participants = models.PositiveIntegerField(default=10)
+    max_participants = models.PositiveIntegerField(default=30)
     language = models.ForeignKey(Language, on_delete=models.SET_DEFAULT, default=1)
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_dives')
     participants = models.ManyToManyField(User, related_name='dive_events', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    club = models.ForeignKey(DiveClub, on_delete=models.SET_NULL, null=True, blank=True, related_name='events')
 
     class Meta:
         ordering = ['date']

@@ -1,0 +1,19 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive Details" %}{% endblock %}
+
+{% block content %}
+<h2>{{ event.title }}</h2>
+<p><strong>{% trans "Description" %}:</strong> {{ event.description }}</p>
+<p><strong>{% trans "Location" %}:</strong> {{ event.dive_location.name }}</p>
+<p><strong>{% trans "Date" %}:</strong> {{ event.date|date:"F j, Y H:i" }}</p>
+<p><strong>{% trans "Max Participants" %}:</strong> {{ event.max_participants }}</p>
+<p><strong>{% trans "Organizer" %}:</strong> {{ event.organizer.username }}</p>
+{% if event.club %}
+  <p><strong>{% trans "Club" %}:</strong> <a href="{% url 'website:club_detail' event.club.slug %}">{{ event.club.name }}</a></p>
+{% else %}
+  <p><strong>{% trans "Type" %}:</strong> {% trans "Open Dive" %}</p>
+{% endif %}
+<!-- Add join/leave buttons here if implementing participant management -->
+{% endblock %}

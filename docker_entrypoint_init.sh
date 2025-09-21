@@ -13,6 +13,9 @@ python manage.py migrate
 echo "python manage.py create_superuser"
 python manage.py create_superuser
 
+echo "python manage.py create_languages"
+python manage.py create_languages
+
 # Static files
 echo "python manage.py collectstatic --noinput"
 python manage.py collectstatic --noinput
