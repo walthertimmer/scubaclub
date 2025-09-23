@@ -1,0 +1,14 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit Dive" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Edit Dive" %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% trans "Save Changes" %}</button>
+</form>
+<a href="{% url 'website:event_detail' event.id %}">{% trans "Cancel" %}</a>
+{% endblock %}

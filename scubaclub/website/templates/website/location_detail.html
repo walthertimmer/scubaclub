@@ -1,0 +1,28 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive Location Details" %}{% endblock %}
+
+{% block content %}
+<h2>{{ location.name }}</h2>
+<p><strong>{% trans "Description" %}:</strong> {{ location.description }}</p>
+<p><strong>{% trans "Country" %}:</strong> {{ location.country }}</p>
+{% if location.latitude and location.longitude %}
+    <p><strong>{% trans "Coordinates" %}:</strong> {{ location.latitude }}, {{ location.longitude }}</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    <a href="{% url 'website:suggest_location_edit' location.id %}" class="cta-button">{% trans "Suggest Edit" %}</a>
+{% endif %}
+
+{% if suggestions %}
+    <h3>{% trans "Pending Suggestions" %}</h3>
+    <ul>
+        {% for suggestion in suggestions %}
+            <li>{{ suggestion.suggested_name }} - <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">Approve</a> | <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">Reject</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<a href="{% url 'website:dive_locations' %}">{% trans "Back to Locations" %}</a>
+{% endblock %}

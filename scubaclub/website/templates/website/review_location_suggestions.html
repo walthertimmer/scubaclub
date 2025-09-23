@@ -1,0 +1,20 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Review Location Suggestions" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Pending Location Edit Suggestions" %}</h2>
+<ul>
+    {% for suggestion in suggestions %}
+        <li>
+            <strong>{{ suggestion.original_location.name }}</strong> by {{ suggestion.suggested_by.username }}<br>
+            Suggested: {{ suggestion.suggested_name }}<br>
+            <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">Approve</a> |
+            <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">Reject</a>
+        </li>
+    {% empty %}
+        <li>{% trans "No pending suggestions." %}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

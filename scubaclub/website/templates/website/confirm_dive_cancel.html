@@ -1,0 +1,16 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Cancellation" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Confirm Cancellation" %}</h2>
+<p>{% trans "Are you sure you want to cancel the dive" %} "{{ event.title }}"?</p>
+<p>{% trans "This action cannot be undone." %}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="cta-button" style="background: red;">{% trans "Yes, Cancel Dive" %}</button>
+  <a href="{% url 'website:event_detail' event.id %}" class="cta-button">{% trans "No, Go Back" %}</a>
+</form>
+{% endblock %}

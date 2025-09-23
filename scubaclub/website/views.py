@@ -20,8 +20,8 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseForbidden
-from .models import DiveClub, DiveEvent, DiveLocation, Language
-from .forms import CustomUserCreationForm, DiveClubForm, DiveEventForm
+from .models import DiveClub, DiveEvent, DiveLocation, Language, DiveLocationSuggestion
+from .forms import CustomUserCreationForm, DiveClubForm, DiveEventForm, DiveLocationForm, DiveLocationSuggestionForm
 
 
 logger = logging.getLogger("scubaclub.views")
@@ -195,6 +195,56 @@ def create_dive(request, club_id):
 
 
 @login_required
+def edit_dive(request, event_id):
+    """Edit an existing dive event, with permission checks."""
+    event = get_object_or_404(DiveEvent, pk=event_id)
+    
+    # Permission check
+    if event.club:
+        # Club dive: Only club admins can edit
+        if request.user not in event.club.admins.all():
+            return HttpResponseForbidden("You do not have permission to edit this dive.")
+    else:
+        # Open dive: Only the organizer can edit
+        if request.user != event.organizer:
+            return HttpResponseForbidden("You do not have permission to edit this dive.")
+    
+    if request.method == 'POST':
+        form = DiveEventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('website:event_detail', event_id=event.id)
+    else:
+        form = DiveEventForm(instance=event)
+    
+    return render(request, 'website/edit_dive.html', {'form': form, 'event': event})
+
+
+@login_required
+def cancel_dive(request, event_id):
+    """Cancel a dive event, with permission checks."""
+    event = get_object_or_404(DiveEvent, pk=event_id)
+    
+    # Permission check
+    if event.club:
+        # Club dive: Only club admins can cancel
+        if request.user not in event.club.admins.all():
+            return HttpResponseForbidden("You do not have permission to cancel this dive.")
+    else:
+        # Open dive: Only the organizer can cancel
+        if request.user != event.organizer:
+            return HttpResponseForbidden("You do not have permission to cancel this dive.")
+    
+    if request.method == 'POST':
+        event.is_cancelled = True
+        event.save()
+        # Optional: Add email notifications to participants here
+        return redirect('website:event_detail', event_id=event.id)
+    
+    return render(request, 'website/confirm_dive_cancel.html', {'event': event})
+
+
+@login_required
 def create_open_dive(request):
     if request.method == 'POST':
         form = DiveEventForm(request.POST)
@@ -215,3 +265,69 @@ def event_detail(request, event_id):
     event = get_object_or_404(DiveEvent, pk=event_id)
     # Optional: Add join/leave logic here (e.g., if POST and not full, add/remove user from participants)
     return render(request, 'website/event_detail.html', {'event': event})
+
+
+@login_required
+def create_dive_location(request):
+    if request.method == 'POST':
+        form = DiveLocationForm(request.POST)
+        if form.is_valid():
+            location = form.save(commit=False)
+            location.created_by = request.user
+            location.language = Language.objects.get(code=get_language())
+            location.save()
+            return redirect('website:dive_locations')
+    else:
+        form = DiveLocationForm()
+    return render(request, 'website/create_dive_location.html', {'form': form})
+
+
+@login_required
+def suggest_location_edit(request, location_id):
+    location = get_object_or_404(DiveLocation, pk=location_id)
+    if request.method == 'POST':
+        form = DiveLocationSuggestionForm(request.POST)
+        if form.is_valid():
+            suggestion = form.save(commit=False)
+            suggestion.original_location = location
+            suggestion.suggested_by = request.user
+            suggestion.save()
+            return redirect('website:location_detail', location_id=location.id)
+    else:
+        form = DiveLocationSuggestionForm()
+    return render(request, 'website/suggest_location_edit.html', {'form': form, 'location': location})
+
+
+@login_required
+def review_location_suggestions(request):
+    if not request.user.is_superuser:  # Or check for admin role
+        return HttpResponseForbidden("Only admins can review suggestions.")
+    suggestions = DiveLocationSuggestion.objects.filter(status='pending')
+    return render(request, 'website/review_location_suggestions.html', {'suggestions': suggestions})
+
+
+@login_required
+def approve_location_suggestion(request, suggestion_id):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Only admins can approve suggestions.")
+    suggestion = get_object_or_404(DiveLocationSuggestion, pk=suggestion_id)
+    suggestion.status = 'approved'
+    suggestion.apply_changes()
+    suggestion.delete()  # Remove after applying
+    return redirect('website:review_location_suggestions')
+
+
+@login_required
+def reject_location_suggestion(request, suggestion_id):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Only admins can reject suggestions.")
+    suggestion = get_object_or_404(DiveLocationSuggestion, pk=suggestion_id)
+    suggestion.status = 'rejected'
+    suggestion.save()
+    return redirect('website:review_location_suggestions')
+
+
+def location_detail(request, location_id):
+    location = get_object_or_404(DiveLocation, pk=location_id)
+    suggestions = location.suggestions.filter(status='pending') if request.user.is_superuser else None
+    return render(request, 'website/location_detail.html', {'location': location, 'suggestions': suggestions})

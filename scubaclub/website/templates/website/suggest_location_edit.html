@@ -1,0 +1,14 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Suggest Edit for Dive Location" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Suggest Edit for" %} {{ location.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% trans "Submit Suggestion" %}</button>
+</form>
+<a href="{% url 'website:location_detail' location.id %}">{% trans "Cancel" %}</a>
+{% endblock %}

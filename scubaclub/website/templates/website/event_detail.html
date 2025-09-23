@@ -5,6 +5,9 @@
 
 {% block content %}
 <h2>{{ event.title }}</h2>
+{% if event.is_cancelled %}
+    <p style="color: red;"><strong>{% trans "This dive has been cancelled." %}</strong></p>
+{% endif %}
 <p><strong>{% trans "Description" %}:</strong> {{ event.description }}</p>
 <p><strong>{% trans "Location" %}:</strong> {{ event.dive_location.name }}</p>
 <p><strong>{% trans "Date" %}:</strong> {{ event.date|date:"F j, Y H:i" }}</p>
@@ -15,5 +18,22 @@
 {% else %}
   <p><strong>{% trans "Type" %}:</strong> {% trans "Open Dive" %}</p>
 {% endif %}
+
+<!-- Add edit and cancel buttons if user has permission and not cancelled -->
+{% if user.is_authenticated and not event.is_cancelled %}
+  {% if event.club %}
+    {% if user in event.club.admins.all %}
+      <a href="{% url 'website:edit_dive' event.id %}" class="cta-button">{% trans "Edit Dive" %}</a>
+      <a href="{% url 'website:cancel_dive' event.id %}" class="cta-button" style="background: red;">{% trans "Cancel Dive" %}</a>
+    {% endif %}
+  {% else %}
+    {% if user == event.organizer %}
+      <a href="{% url 'website:edit_dive' event.id %}" class="cta-button">{% trans "Edit Dive" %}</a>
+      <a href="{% url 'website:cancel_dive' event.id %}" class="cta-button" style="background: red;">{% trans "Cancel Dive" %}</a>
+    {% endif %}
+  {% endif %}
+{% endif %}
+
 <!-- Add join/leave buttons here if implementing participant management -->
+
 {% endblock %}

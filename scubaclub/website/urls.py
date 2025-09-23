@@ -31,4 +31,12 @@ urlpatterns = [
     path('club/<int:club_id>/create_dive/', views.create_dive, name='create_dive'),
     path('create_open_dive/', views.create_open_dive, name='create_open_dive'),
     path('event/<int:event_id>/', views.event_detail, name='event_detail'),
+    path('event/<int:event_id>/edit/', views.edit_dive, name='edit_dive'),
+    path('event/<int:event_id>/cancel/', views.cancel_dive, name='cancel_dive'),
+    path('create_dive_location/', views.create_dive_location, name='create_dive_location'),
+    path('location/<int:location_id>/', views.location_detail, name='location_detail'),
+    path('location/<int:location_id>/suggest_edit/', views.suggest_location_edit, name='suggest_location_edit'),
+    path('review_location_suggestions/', views.review_location_suggestions, name='review_location_suggestions'),
+    path('approve_suggestion/<int:suggestion_id>/', views.approve_location_suggestion, name='approve_location_suggestion'),
+    path('reject_suggestion/<int:suggestion_id>/', views.reject_location_suggestion, name='reject_location_suggestion'),
 ]

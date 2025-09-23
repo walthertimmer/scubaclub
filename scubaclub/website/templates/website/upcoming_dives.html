@@ -5,18 +5,26 @@
 
 {% block content %}
 <h2>{% trans "Upcoming Dives" %}</h2>
-<ul>
-    {% for dive in dives %}
-    <li>{{ dive.title }} - {{ dive.date|date:"F j, Y" }} at {{ dive.dive_location.name }}</li>
-    {% empty %}
-    <li>{% trans "No upcoming dives." %}</li>
-    {% endfor %}
-</ul>
 
 {% if user.is_authenticated %}
     <a href="{% url 'website:create_open_dive' %}">{% trans "Create Open Dive" %}</a>
 {% else %}
     <p>{% trans "Please log in to organize your own dives." %}</p>
 {% endif %}
+
+<ul>
+    {% for dive in dives %}
+    <li>
+        <a href="{% url 'website:event_detail' event_id=dive.id %}">{{ dive.title }}</a> - {{ dive.date|date:"F j, Y" }} at {{ dive.dive_location.name }}
+        {% if dive.club %}
+            (Club: <a href="{% url 'website:club_detail' club_slug=dive.club.slug %}">{{ dive.club.name }}</a>)
+        {% else %}
+            (Open Dive)
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>{% trans "No upcoming dives." %}</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}

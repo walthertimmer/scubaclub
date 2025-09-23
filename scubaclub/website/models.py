@@ -46,6 +46,36 @@ class DiveLocation(models.Model):
         return cls.objects.filter(language__code=current_lang)
 
 
+class DiveLocationSuggestion(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    original_location = models.ForeignKey(DiveLocation, on_delete=models.CASCADE, related_name='suggestions')
+    suggested_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    suggested_name = models.CharField(max_length=255, blank=True)
+    suggested_description = models.TextField(blank=True)
+    suggested_country = models.CharField(max_length=128, blank=True)
+    suggested_latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    suggested_longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Suggestion for {self.original_location.name} by {self.suggested_by.username}"
+
+    def apply_changes(self):
+        """Apply approved changes to the original location."""
+        if self.status == 'approved':
+            self.original_location.name = self.suggested_name or self.original_location.name
+            self.original_location.description = self.suggested_description or self.original_location.description
+            self.original_location.country = self.suggested_country or self.original_location.country
+            self.original_location.latitude = self.suggested_latitude if self.suggested_latitude is not None else self.original_location.latitude
+            self.original_location.longitude = self.suggested_longitude if self.suggested_longitude is not None else self.original_location.longitude
+            self.original_location.save()
+            
+
 class DiveClub(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -102,6 +132,7 @@ class DiveEvent(models.Model):
     participants = models.ManyToManyField(User, related_name='dive_events', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     club = models.ForeignKey(DiveClub, on_delete=models.SET_NULL, null=True, blank=True, related_name='events')
+    is_cancelled = models.BooleanField(default=False, help_text="Mark if the dive has been cancelled.")
 
     class Meta:
         ordering = ['date']

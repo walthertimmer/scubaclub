@@ -5,11 +5,19 @@
 
 {% block content %}
 <h2>{% trans "Dive Locations" %}</h2>
+
+{% if user.is_authenticated %}
+    <p><a href="{% url 'website:create_dive_location' %}">{% trans "Create a new dive location" %}</a></p>
+{% else %}
+    <p>{% trans "Please log in to create your own dive locations." %}</p>
+{% endif %}
+
 <ul>
     {% for location in locations %}
-    <li>{{ location.name }} - {{ location.description }}</li>
+    <li><a href="{% url 'website:location_detail' location.id %}">{{ location.name }}</a> - {{ location.description }}</li>
     {% empty %}
     <li>{% trans "No dive locations available." %}</li>
     {% endfor %}
 </ul>
+
 {% endblock %}
