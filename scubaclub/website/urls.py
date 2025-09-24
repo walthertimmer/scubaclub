@@ -11,6 +11,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('health/', views.health, name='health'),
     path(_('privacy/'), views.privacy, name='privacy'),
+    path(_('contact/'), views.contact, name='contact'),
 
     path(_('register/'), views.register, name='register'),
     path(_('activate/<uidb64>/<token>/'), views.activate, name='activate'),

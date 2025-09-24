@@ -51,7 +51,7 @@
             <input type="hidden" name="next" value="{{ request.get_full_path }}">
             <input type="submit" value="{% trans 'Change language' %}">
         </form>
-        <p>&copy; 2025 scubaclub.org | <a href="{% url 'website:privacy' %}">{% trans "privacy" %}</a></p>
+        <p>&copy; 2025 scubaclub.org | <a href="{% url 'website:privacy' %}">{% trans "privacy" %}</a> | <a href="{% url 'website:contact' %}">{% trans "contact" %}</a></p>
     </footer>
 
 </body>

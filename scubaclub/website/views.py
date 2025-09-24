@@ -430,3 +430,8 @@ def location_detail(request, location_id):
 def privacy(request):
     """Render the privacy policy page."""
     return render(request, "website/privacy.html")
+
+
+def contact(request):
+    """Render the contact page."""
+    return render(request, "website/contact.html")
