@@ -9,7 +9,31 @@
     {% for suggestion in suggestions %}
         <li>
             <strong>{{ suggestion.original_location.name }}</strong> by {{ suggestion.suggested_by.username }}<br>
-            Suggested: {{ suggestion.suggested_name }}<br>
+            <em>{% trans "Submitted on" %}: {{ suggestion.created_at|date:"F j, Y H:i" }}</em><br>
+
+            <!-- Display changes in a simple diff format -->
+            <h4>{% trans "Proposed Changes" %}:</h4>
+            <ul>
+                {% if suggestion.suggested_name %}
+                    <li><strong>{% trans "Name" %}:</strong> {% trans "Original" %}: {{ suggestion.original_location.name }} → {% trans "Suggested" %}: {{ suggestion.suggested_name }}</li>
+                {% endif %}
+                {% if suggestion.suggested_description %}
+                    <li><strong>{% trans "Description" %}:</strong> {% trans "Original" %}: {{ suggestion.original_location.description|truncatechars:50 }} → {% trans "Suggested" %}: {{ suggestion.suggested_description|truncatechars:50 }}</li>
+                {% endif %}
+                {% if suggestion.suggested_country %}
+                    <li><strong>{% trans "Country" %}:</strong> {% trans "Original" %}: {{ suggestion.original_location.country }} → {% trans "Suggested" %}: {{ suggestion.suggested_country }}</li>
+                {% endif %}
+                {% if suggestion.suggested_latitude %}
+                    <li><strong>{% trans "Latitude" %}:</strong> {% trans "Original" %}: {{ suggestion.original_location.latitude }} → {% trans "Suggested" %}: {{ suggestion.suggested_latitude }}</li>
+                {% endif %}
+                {% if suggestion.suggested_longitude %}
+                    <li><strong>{% trans "Longitude" %}:</strong> {% trans "Original" %}: {{ suggestion.original_location.longitude }} → {% trans "Suggested" %}: {{ suggestion.suggested_longitude }}</li>
+                {% endif %}
+                {% if not suggestion.suggested_name and not suggestion.suggested_description and not suggestion.suggested_country and not suggestion.suggested_latitude and not suggestion.suggested_longitude %}
+                    <li><em>{% trans "No specific changes suggested (all fields blank)." %}</em></li>
+                {% endif %}
+            </ul>
+
             <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">Approve</a> |
             <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">Reject</a>
         </li>

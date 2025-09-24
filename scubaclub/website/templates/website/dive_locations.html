@@ -20,4 +20,8 @@
     {% endfor %}
 </ul>
 
+{% if user.is_superuser %}
+    <p><a href="{% url 'website:review_location_suggestions' %}">{% trans "Review Edit Suggestions" %}</a></p>
+{% endif %}
+
 {% endblock %}

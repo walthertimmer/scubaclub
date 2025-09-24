@@ -8,6 +8,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">{% trans "Create Location" %}</button>
+    <button type="submit" class="cta-button">{% trans "Create Location" %}</button>
 </form>
 {% endblock %}

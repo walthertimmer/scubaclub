@@ -1,13 +1,14 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Create Dive" %}{% endblock %}
+{% block title %}{% trans "Create Dive Event" %}{% endblock %}
 
 {% block content %}
-<h2>{% if club %}{% trans "Create a New Dive for" %} {{ club.name }}{% else %}{% trans "Create an Open Dive" %}{% endif %}</h2>
+<h2>{% trans "Create a Dive Event" %}</h2>
+<p>{% trans "Select a club to create a club dive (only if you're a member or admin), or leave it blank for an open dive." %}</p>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">{% trans "Create Dive" %}</button>
+    <button type="submit" class="cta-button">{% trans "Create Dive" %}</button>
 </form>
 {% endblock %}

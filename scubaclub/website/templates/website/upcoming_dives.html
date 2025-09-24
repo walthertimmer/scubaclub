@@ -7,7 +7,7 @@
 <h2>{% trans "Upcoming Dives" %}</h2>
 
 {% if user.is_authenticated %}
-    <a href="{% url 'website:create_open_dive' %}">{% trans "Create Open Dive" %}</a>
+    <a href="{% url 'website:create_dive_event' %}">{% trans "Create Open Dive" %}</a>
 {% else %}
     <p>{% trans "Please log in to organize your own dives." %}</p>
 {% endif %}

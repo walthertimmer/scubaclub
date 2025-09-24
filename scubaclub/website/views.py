@@ -129,6 +129,26 @@ def club_detail(request, club_slug):
 
 
 @login_required
+def edit_dive_club(request, club_slug):
+    """Edit an existing dive club, with permission checks."""
+    club = get_object_or_404(DiveClub, slug=club_slug)
+
+    # Permission check: Only club admins can edit
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+
+    if request.method == 'POST':
+        form = DiveClubForm(request.POST, instance=club)
+        if form.is_valid():
+            form.save()
+            return redirect('website:club_detail', club_slug=club.slug)
+    else:
+        form = DiveClubForm(instance=club)
+
+    return render(request, 'website/edit_dive_club.html', {'form': form, 'club': club})
+
+
+@login_required
 def request_join_club(request, club_id):
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.method == 'POST':
@@ -150,6 +170,17 @@ def approve_member(request, club_id, user_id):
 
 
 @login_required
+def reject_member(request, club_id, user_id):
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+    user = get_object_or_404(User, pk=user_id)
+    if user in club.pending_members.all():
+        club.pending_members.remove(user)
+    return redirect('website:club_detail', club_slug=club.slug)
+
+
+@login_required
 def remove_member(request, club_id, user_id):
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.user not in club.admins.all():
@@ -157,6 +188,39 @@ def remove_member(request, club_id, user_id):
     user = get_object_or_404(User, pk=user_id)
     if user in club.members.all():
         club.members.remove(user)
+    return redirect('website:club_detail', club_slug=club.slug)
+
+
+@login_required
+def promote_to_admin(request, club_id, user_id):
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+    user = get_object_or_404(User, pk=user_id)
+    if user in club.members.all() and user not in club.admins.all():
+        club.admins.add(user)
+        # Optional: Ensure they are still a member (though they should be)
+        if user not in club.members.all():
+            club.members.add(user)
+    return redirect('website:club_detail', club_slug=club.slug)
+
+
+@login_required
+def remove_admin(request, club_id, user_id):
+    club = get_object_or_404(DiveClub, pk=club_id)
+    if request.user not in club.admins.all():
+        return HttpResponseForbidden("You are not an admin of this club.")
+    user = get_object_or_404(User, pk=user_id)
+    if user in club.admins.all():
+        # Check if this would leave no admins
+        if club.admins.count() <= 1:
+            # You could return an error message or redirect with a warning
+            # For simplicity, prevent the action and redirect back
+            return redirect('website:club_detail', club_slug=club.slug)  # Or add a message
+        club.admins.remove(user)
+        # Optional: Remove from members as well (demote fully)
+        # If you want to keep them as a member, comment out the next line
+        # club.members.remove(user)
     return redirect('website:club_detail', club_slug=club.slug)
 
 
@@ -195,10 +259,49 @@ def create_dive(request, club_id):
 
 
 @login_required
+def create_dive_event(request, club_id=None):
+    """Create a new dive event (club or open)."""
+    initial = {}
+    if club_id:
+        club = get_object_or_404(DiveClub, pk=club_id)
+        # Check if user is a member or admin of the club
+        if request.user not in club.members.all() and request.user not in club.admins.all():
+            return HttpResponseForbidden("You are not a member or admin of this club.")
+        initial['club'] = club  # Pre-select the club
+
+    if request.method == 'POST':
+        form = DiveEventForm(request.POST, user=request.user)
+        if form.is_valid():
+            dive = form.save(commit=False)
+            dive.organizer = request.user
+            selected_club = form.cleaned_data.get('club')
+            if selected_club:
+                # Check if user is a member or admin of the selected club
+                if request.user not in selected_club.members.all() and request.user not in selected_club.admins.all():
+                    form.add_error('club', "You must be a member or admin of the selected club to create a club dive.")
+                    return render(request, 'website/create_dive.html', {'form': form})
+                dive.club = selected_club
+                dive.language = selected_club.language  # Inherit club's language
+                redirect_url = 'website:club_detail'  # Redirect to club page
+                redirect_kwargs = {'club_slug': selected_club.slug}
+            else:
+                # Open dive: no club
+                dive.club = None
+                dive.language = Language.objects.get(code=get_language())
+                redirect_url = 'website:upcoming_dives'  # Redirect to upcoming dives
+                redirect_kwargs = {}
+            dive.save()
+            return redirect(redirect_url, **redirect_kwargs)
+    else:
+        form = DiveEventForm(user=request.user, initial=initial)
+    return render(request, 'website/create_dive.html', {'form': form})
+
+
+@login_required
 def edit_dive(request, event_id):
     """Edit an existing dive event, with permission checks."""
     event = get_object_or_404(DiveEvent, pk=event_id)
-    
+
     # Permission check
     if event.club:
         # Club dive: Only club admins can edit
@@ -208,7 +311,7 @@ def edit_dive(request, event_id):
         # Open dive: Only the organizer can edit
         if request.user != event.organizer:
             return HttpResponseForbidden("You do not have permission to edit this dive.")
-    
+
     if request.method == 'POST':
         form = DiveEventForm(request.POST, instance=event)
         if form.is_valid():
@@ -216,7 +319,7 @@ def edit_dive(request, event_id):
             return redirect('website:event_detail', event_id=event.id)
     else:
         form = DiveEventForm(instance=event)
-    
+
     return render(request, 'website/edit_dive.html', {'form': form, 'event': event})
 
 
@@ -224,7 +327,7 @@ def edit_dive(request, event_id):
 def cancel_dive(request, event_id):
     """Cancel a dive event, with permission checks."""
     event = get_object_or_404(DiveEvent, pk=event_id)
-    
+
     # Permission check
     if event.club:
         # Club dive: Only club admins can cancel
@@ -234,30 +337,14 @@ def cancel_dive(request, event_id):
         # Open dive: Only the organizer can cancel
         if request.user != event.organizer:
             return HttpResponseForbidden("You do not have permission to cancel this dive.")
-    
+
     if request.method == 'POST':
         event.is_cancelled = True
         event.save()
         # Optional: Add email notifications to participants here
         return redirect('website:event_detail', event_id=event.id)
-    
+
     return render(request, 'website/confirm_dive_cancel.html', {'event': event})
-
-
-@login_required
-def create_open_dive(request):
-    if request.method == 'POST':
-        form = DiveEventForm(request.POST)
-        if form.is_valid():
-            dive = form.save(commit=False)
-            dive.organizer = request.user
-            dive.club = None  # No club association
-            dive.language = Language.objects.get(code=get_language())  # Set to current language
-            dive.save()
-            return redirect('website:upcoming_dives')
-    else:
-        form = DiveEventForm()
-    return render(request, 'website/create_dive.html', {'form': form, 'club': None})  # Reuse template, pass club=None
 
 
 @login_required
@@ -294,7 +381,14 @@ def suggest_location_edit(request, location_id):
             suggestion.save()
             return redirect('website:location_detail', location_id=location.id)
     else:
-        form = DiveLocationSuggestionForm()
+        # Pre-fill the form with current location values
+        form = DiveLocationSuggestionForm(initial={
+            'suggested_name': location.name,
+            'suggested_description': location.description,
+            'suggested_country': location.country,
+            'suggested_latitude': location.latitude,
+            'suggested_longitude': location.longitude,
+        })
     return render(request, 'website/suggest_location_edit.html', {'form': form, 'location': location})
 
 
@@ -331,3 +425,8 @@ def location_detail(request, location_id):
     location = get_object_or_404(DiveLocation, pk=location_id)
     suggestions = location.suggestions.filter(status='pending') if request.user.is_superuser else None
     return render(request, 'website/location_detail.html', {'location': location, 'suggestions': suggestions})
+
+
+def privacy(request):
+    """Render the privacy policy page."""
+    return render(request, "website/privacy.html")

@@ -5,7 +5,7 @@
 <html lang="{{ CURRENT_LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}ScubaClub{% endblock %}</title>
+    <title>{% block title %}scubaclub.org{% endblock %} | scubaclub.org</title>
     <link rel="icon" type="image/x-icon" href="{% static 'website/images/favicon.ico' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'website/css/style.css' %}">
 </head>
@@ -13,7 +13,7 @@
     <header>
         <div class="header-content">
             <img src="{% static 'website/images/scubaclub.png' %}" alt="ScubaClub" class="logo">
-            <a href="{% url 'website:home' %}"><h1>ScubaClub</h1></a>
+            <a href="{% url 'website:home' %}"><h1>scubaclub.org</h1></a>
         </div>
         <nav>
             {% if user.is_authenticated %}
@@ -31,7 +31,7 @@
             | <a href="{% url 'website:dive_locations' %}">{% trans "Dive Locations" %}</a>
         </nav>
 
-        
+
     </header>
 
     <main>
@@ -42,16 +42,16 @@
         <form action="/i18n/setlang/" method="post">
             {% csrf_token %}
             <select name="language">
-                {% get_current_language as LANGUAGE_CODE %}
+                {% get_current_language as CURRENT_LANGUAGE_CODE %}
                 {% get_available_languages as LANGUAGES %}
                 {% for lang in LANGUAGES %}
-                    <option value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected{% endif %}>{{ lang.1 }}</option>
+                    <option value="{{ lang.0 }}"{% if lang.0 == CURRENT_LANGUAGE_CODE %} selected{% endif %}>{{ lang.1 }}</option>
                 {% endfor %}
             </select>
             <input type="hidden" name="next" value="{{ request.get_full_path }}">
             <input type="submit" value="{% trans 'Change language' %}">
         </form>
-        <p>&copy; 2025 ScubaClub</p>
+        <p>&copy; 2025 scubaclub.org | <a href="{% url 'website:privacy' %}">{% trans "privacy" %}</a></p>
     </footer>
 
 </body>
