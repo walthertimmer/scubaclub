@@ -8,7 +8,7 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">{% trans "Save Changes" %}</button>
+    <button type="submit" class="cta-button">{% trans "Save Changes" %}</button>
 </form>
 <a href="{% url 'website:event_detail' event.id %}">{% trans "Cancel" %}</a>
 {% endblock %}

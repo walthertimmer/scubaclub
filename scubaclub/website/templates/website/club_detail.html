@@ -4,10 +4,33 @@
 {% block title %}{% trans "Dive Club Details" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Dive Club: " %}{{ club.name }}</h2>
+<h2>{% trans "Dive club: " %}{{ club.name }}</h2>
 
 {% if club.description %}
 <p><strong>{% trans "Description:" %}</strong> {{ club.description }}</p>
+{% endif %}
+
+<h3>{% trans "Contact Information" %}</h3>
+{% if club.address %}
+<p><strong>{% trans "Address:" %}</strong> {{ club.address }}</p>
+{% endif %}
+{% if club.municipality %}
+<p><strong>{% trans "Municipality:" %}</strong> {{ club.municipality }}</p>
+{% endif %}
+{% if club.postal_code %}
+<p><strong>{% trans "Postal Code:" %}</strong> {{ club.postal_code }}</p>
+{% endif %}
+{% if club.country %}
+<p><strong>{% trans "Country:" %}</strong> {{ club.country }}</p>
+{% endif %}
+{% if club.telephone %}
+<p><strong>{% trans "Telephone:" %}</strong> {{ club.telephone }}</p>
+{% endif %}
+{% if club.website %}
+<p><strong>{% trans "Website:" %}</strong> <a href="{{ club.website }}" target="_blank">{{ club.website }}</a></p>
+{% endif %}
+{% if club.email %}
+<p><strong>{% trans "Email:" %}</strong> <a href="mailto:{{ club.email }}">{{ club.email }}</a></p>
 {% endif %}
 
 <h3>{% trans "Admins" %}</h3>
@@ -125,14 +148,14 @@
 
 {% if user in admins %}
   <h3>{% trans "Manage Club" %}</h3>
-  <a href="{% url 'website:edit_dive_club' club.slug %}" class="cta-button">{% trans "Edit Club" %}</a>
+  <a href="{% url 'website:edit_dive_club' club_slug %}" class="cta-button">{% trans "Edit Club" %}</a>
 {% endif %}
 
 {% if not user.is_authenticated %}
   <p>{% trans "To request to join this club or create a club dive event, please" %} <a href="{% url 'website:login' %}">{% trans "log in" %}</a>.</p>
 {% endif %}
 
-<a href="{% url 'website:dive_clubs' %}" class="cta-button">{% trans "Back to Clubs" %}</a>
+<a href="{% url 'website:dive_clubs' %}" class="cta-button">{% trans "Back to clubs" %}</a>
 
 
 

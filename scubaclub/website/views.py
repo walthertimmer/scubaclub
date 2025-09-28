@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 from django.utils.translation import get_language
 from django.utils import translation
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseForbidden
-from .models import DiveClub, DiveEvent, DiveLocation, Language, DiveLocationSuggestion
+from .models import DiveClub, DiveClubTranslation, DiveEvent, DiveLocation, Language, DiveLocationSuggestion
 from .forms import CustomUserCreationForm, DiveClubForm, DiveEventForm, DiveLocationForm, DiveLocationSuggestionForm
 
 
@@ -81,6 +81,7 @@ def activate(request, uidb64, token):
 
 
 def registration_complete(request):
+    """Render the registration complete page."""
     return render(request, "website/registration_complete.html")
 
 
@@ -95,13 +96,34 @@ class CustomLogoutView(LogoutView):
 
 def dive_clubs(request):
     """Render the dive clubs page."""
+    current_lang = get_language()
+    logger.info("Current language detected as: %s", current_lang)
+
     clubs = DiveClub.get_for_current_language()
-    return render(request, "website/dive_clubs.html", {"clubs": clubs})
+    logger.info("views.dive_clubs Found %d clubs for current language %s", clubs.count(), current_lang)
+
+    # Filter to only include clubs with valid slugs and prepare context
+    clubs_with_slugs = []
+    for club in clubs:
+        slug = club.get_slug_for_language(current_lang)
+        if slug:
+            club.club_slug = slug
+            club.name = club.get_name_for_language(current_lang)
+            club.description = club.get_description_for_language(current_lang)
+            clubs_with_slugs.append(club)
+        else:
+            logger.warning("Club ID %d has no slug for language %s", club.id, current_lang)
+    return render(request, "website/dive_clubs.html", {"clubs": clubs_with_slugs})
 
 
 def upcoming_dives(request):
     """Render the upcoming dives page."""
     dives = DiveEvent.get_for_current_language().filter(date__gte=timezone.now())
+    current_lang = get_language()
+    for dive in dives:
+        if dive.club:
+            dive.club_slug = dive.club.get_slug_for_language(current_lang)
+            dive.club_name = dive.club.get_name_for_language(current_lang)
     return render(request, "website/upcoming_dives.html", {"dives": dives})
 
 
@@ -111,19 +133,29 @@ def dive_locations(request):
     return render(request, "website/dive_locations.html", {"locations": locations})
 
 
-# @login_required
 def club_detail(request, club_slug):
     """Render the detail page for a specific dive club."""
-    club = get_object_or_404(DiveClub, slug=club_slug)
-    # Optional: Add logic to restrict access (e.g., only members or admins can view)
-    # if request.user not in club.members.all() and request.user not in club.admins.all():
-    #     return HttpResponseForbidden("You do not have permission to view this club.")
+    current_lang = get_language()
+    try:
+        translation = DiveClubTranslation.objects.get(
+            slug=club_slug, language__code=current_lang)
+        club = translation.dive_club
+    except DiveClubTranslation.DoesNotExist:
+        # Instead of raising Http404, redirect to the club overview page
+        # This handles cases where the club doesn't exist in the current language
+        return redirect('website:dive_clubs')
+
+    # Populate translated name and description for the template
+    club.name = club.get_name_for_language(current_lang)
+    club.description = club.get_description_for_language(current_lang)
+
     context = {
         'club': club,
         'members': club.members.all(),
         'admins': club.admins.all(),
         'pending_members': club.pending_members.all(),
         'club_events': club.events.filter(date__gte=timezone.now()),
+        'club_slug': club.get_slug_for_language(current_lang),
     }
     return render(request, "website/club_detail.html", context)
 
@@ -131,7 +163,14 @@ def club_detail(request, club_slug):
 @login_required
 def edit_dive_club(request, club_slug):
     """Edit an existing dive club, with permission checks."""
-    club = get_object_or_404(DiveClub, slug=club_slug)
+    current_lang = get_language()
+    try:
+        translation = DiveClubTranslation.objects.get(
+            slug=club_slug, language__code=current_lang)
+        club = translation.dive_club
+        club_name = translation.name
+    except DiveClubTranslation.DoesNotExist:
+        raise Http404("Club not found")
 
     # Permission check: Only club admins can edit
     if request.user not in club.admins.all():
@@ -141,20 +180,36 @@ def edit_dive_club(request, club_slug):
         form = DiveClubForm(request.POST, instance=club)
         if form.is_valid():
             form.save()
-            return redirect('website:club_detail', club_slug=club.slug)
+            # Redirect using the (possibly updated) slug for current language
+            updated_slug = club.get_slug_for_language(current_lang)
+            if updated_slug:
+                return redirect('website:club_detail', club_slug=updated_slug)
+            else:
+                return redirect('website:dive_clubs')
     else:
         form = DiveClubForm(instance=club)
 
-    return render(request, 'website/edit_dive_club.html', {'form': form, 'club': club})
+    return render(request,
+                  'website/edit_dive_club.html',
+                  {'form': form,
+                   'club': club,
+                   'club_slug': club_slug,
+                   'club_name': club_name})
 
 
 @login_required
 def request_join_club(request, club_id):
+    """Request to join a dive club."""
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.method == 'POST':
         club.pending_members.add(request.user)
         # Optionally, send notification to admins
-    return redirect('website:club_detail', club_slug=club.slug)
+    current_lang = get_language()
+    club_slug = club.get_slug_for_language(current_lang)
+    if club_slug:
+        return redirect('website:club_detail', club_slug=club_slug)
+    else:
+        return redirect('website:dive_clubs')
 
 
 @login_required
@@ -166,7 +221,12 @@ def approve_member(request, club_id, user_id):
     if user in club.pending_members.all():
         club.pending_members.remove(user)
         club.members.add(user)
-    return redirect('website:club_detail', club_slug=club.slug)
+    current_lang = get_language()
+    club_slug = club.get_slug_for_language(current_lang)
+    if club_slug:
+        return redirect('website:club_detail', club_slug=club_slug)
+    else:
+        return redirect('website:dive_clubs')
 
 
 @login_required
@@ -177,7 +237,12 @@ def reject_member(request, club_id, user_id):
     user = get_object_or_404(User, pk=user_id)
     if user in club.pending_members.all():
         club.pending_members.remove(user)
-    return redirect('website:club_detail', club_slug=club.slug)
+    current_lang = get_language()
+    club_slug = club.get_slug_for_language(current_lang)
+    if club_slug:
+        return redirect('website:club_detail', club_slug=club_slug)
+    else:
+        return redirect('website:dive_clubs')
 
 
 @login_required
@@ -188,7 +253,12 @@ def remove_member(request, club_id, user_id):
     user = get_object_or_404(User, pk=user_id)
     if user in club.members.all():
         club.members.remove(user)
-    return redirect('website:club_detail', club_slug=club.slug)
+    current_lang = get_language()
+    club_slug = club.get_slug_for_language(current_lang)
+    if club_slug:
+        return redirect('website:club_detail', club_slug=club_slug)
+    else:
+        return redirect('website:dive_clubs')
 
 
 @login_required
@@ -202,7 +272,12 @@ def promote_to_admin(request, club_id, user_id):
         # Optional: Ensure they are still a member (though they should be)
         if user not in club.members.all():
             club.members.add(user)
-    return redirect('website:club_detail', club_slug=club.slug)
+    current_lang = get_language()
+    club_slug = club.get_slug_for_language(current_lang)
+    if club_slug:
+        return redirect('website:club_detail', club_slug=club_slug)
+    else:
+        return redirect('website:dive_clubs')
 
 
 @login_required
@@ -216,23 +291,43 @@ def remove_admin(request, club_id, user_id):
         if club.admins.count() <= 1:
             # You could return an error message or redirect with a warning
             # For simplicity, prevent the action and redirect back
-            return redirect('website:club_detail', club_slug=club.slug)  # Or add a message
+            current_lang = get_language()
+            club_slug = club.get_slug_for_language(current_lang)
+            if club_slug:
+                return redirect('website:club_detail', club_slug=club_slug)
+            else:
+                return redirect('website:dive_clubs')
         club.admins.remove(user)
         # Optional: Remove from members as well (demote fully)
         # If you want to keep them as a member, comment out the next line
         # club.members.remove(user)
-    return redirect('website:club_detail', club_slug=club.slug)
+    current_lang = get_language()
+    club_slug = club.get_slug_for_language(current_lang)
+    if club_slug:
+        return redirect('website:club_detail', club_slug=club_slug)
+    else:
+        return redirect('website:dive_clubs')
 
 
 @login_required
 def create_dive_club(request):
+    """Create a new dive club."""
     if request.method == 'POST':
         form = DiveClubForm(request.POST)
         if form.is_valid():
             club = form.save(commit=False)
             club.created_by = request.user
             club.save()
-            return redirect('website:club_detail', club_slug=club.slug)
+            # Manually save translations since commit=False skipped it
+            form._save_translations(club)
+            current_lang = get_language()
+            club_slug = club.get_slug_for_language(current_lang)
+            if club_slug:
+                return redirect('website:club_detail', club_slug=club_slug)
+            else:
+                # Fallback if no slug (shouldn't happen with required names)
+                logger.warning("No slug found for newly created club ID %s in language %s", club.id, current_lang)
+                return redirect('website:dive_clubs')
     else:
         form = DiveClubForm()
     return render(request, 'website/create_dive_club.html', {'form': form})

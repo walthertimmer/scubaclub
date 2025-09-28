@@ -7,7 +7,7 @@
 <h2>{% trans "Upcoming Dives" %}</h2>
 
 {% if user.is_authenticated %}
-    <a href="{% url 'website:create_dive_event' %}">{% trans "Create Open Dive" %}</a>
+    <a href="{% url 'website:create_dive_event' %}">{% trans "Create a new dive" %}</a>
 {% else %}
     <p>{% trans "Please log in to organize your own dives." %}</p>
 {% endif %}
@@ -17,9 +17,9 @@
     <li>
         <a href="{% url 'website:event_detail' event_id=dive.id %}">{{ dive.title }}</a> - {{ dive.date|date:"F j, Y" }} at {{ dive.dive_location.name }}
         {% if dive.club %}
-            (Club: <a href="{% url 'website:club_detail' club_slug=dive.club.slug %}">{{ dive.club.name }}</a>)
+            (Club: <a href="{% url 'website:club_detail' club_slug=dive.club_slug %}">{{ dive.club_name }}</a>)
         {% else %}
-            (Open Dive)
+            (Open dive)
         {% endif %}
     </li>
     {% empty %}

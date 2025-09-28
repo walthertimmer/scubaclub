@@ -1,14 +1,55 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Create Dive Event" %}{% endblock %}
+{% block title %}{% trans "Create a dive" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Create a Dive Event" %}</h2>
-<p>{% trans "Select a club to create a club dive (only if you're a member or admin), or leave it blank for an open dive." %}</p>
+<h2>{% trans "Create a dive" %}</h2>
+<p>{% trans "Select a club to create a club dive (only if you're a member or admin), or leave it blank for an open dive that will be available to all." %}</p>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="cta-button">{% trans "Create Dive" %}</button>
+    {{ form.title.label_tag }}
+    <br>
+    {{ form.title }}
+    <br>
+    {% if form.title.help_text %}<small>{{ form.title.help_text }}</small>{% endif %}
+    <br>
+    <br>
+    {{ form.description.label_tag }}
+    <br>
+    {{ form.description }}
+    <br>
+    {% if form.description.help_text %}<small>{{ form.description.help_text }}</small>{% endif %}
+    <br>
+    <br>
+    {{ form.dive_location.label_tag }}
+    <br>
+    {{ form.dive_location }}
+    <br>
+    {% if form.dive_location.help_text %}<small>{{ form.dive_location.help_text }}</small>{% endif %}
+    <p>{% trans "If your desired location is not listed," %} <a href="{% url 'website:create_dive_location' %}" target="_blank">{% trans "create a new dive location" %}</a>.</p>
+    <br>
+    {{ form.date.label_tag }}
+    <br>
+    {{ form.date }}
+    <br>
+    {% if form.date.help_text %}<small>{{ form.date.help_text }}</small>{% endif %}
+    <br>
+    <br>
+    {{ form.max_participants.label_tag }}
+    <br>
+    {{ form.max_participants }}
+    <br>
+    {% if form.max_participants.help_text %}<small>{{ form.max_participants.help_text }}</small>{% endif %}
+    <br>
+    <br>
+    {{ form.club.label_tag }}
+    <br>
+    {{ form.club }}
+    <br>
+    {% if form.club.help_text %}<small>{{ form.club.help_text }}</small>{% endif %}
+    <br>
+    <br>
+    <button type="submit" class="cta-button">{% trans "Create dive" %}</button>
 </form>
 {% endblock %}
