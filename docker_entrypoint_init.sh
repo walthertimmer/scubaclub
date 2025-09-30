@@ -16,6 +16,9 @@ python manage.py create_superuser
 echo "python manage.py create_languages"
 python manage.py create_languages
 
+echo "python manage.py create_countries"
+python manage.py create_countries
+
 # Static files
 echo "python manage.py collectstatic --noinput"
 python manage.py collectstatic --noinput

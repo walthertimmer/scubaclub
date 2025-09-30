@@ -14,7 +14,7 @@
 
 <ul>
     {% for location in locations %}
-    <li><a href="{% url 'website:location_detail' location.id %}">{{ location.name }}</a> - {{ location.description }}</li>
+    <li><a href="{% url 'website:location_detail' location_slug=location.slug %}">{{ location.name }}</a> - {{ location.description }}</li>
     {% empty %}
     <li>{% trans "No dive locations available." %}</li>
     {% endfor %}

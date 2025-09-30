@@ -98,3 +98,9 @@ make sure language codes are loaded
 ```bash
 python manage.py create_languages
 ```
+
+create country and translations
+
+```bash
+python manage.py create_countries
+```

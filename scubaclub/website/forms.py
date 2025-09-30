@@ -246,15 +246,203 @@ class DiveLocationForm(forms.ModelForm):
     """
     Form for creating/editing a DiveLocation
     """
+
+    # Dutch fields
+    name_nl = forms.CharField(
+        max_length=255,
+        label="Name (Dutch)",
+        required=True,  # Will be overridden dynamically
+        widget=forms.TextInput(attrs={'placeholder': 'Enter location name in Dutch'})
+    )
+    description_nl = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Enter description in Dutch'}),
+        label="Description (Dutch)",
+        required=False
+    )
+
+    # English fields (optional)
+    name_en = forms.CharField(
+        max_length=255,
+        label="Name (English)",
+        required=False,  # Will be overridden dynamically
+        widget=forms.TextInput(attrs={'placeholder': 'Enter location name in English'})
+    )
+    description_en = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Enter description in English'}),
+        label="Description (English)",
+        required=False
+    )
+
     class Meta:
         model = DiveLocation
-        fields = ['name', 'description', 'country', 'latitude', 'longitude']
+        fields = ['country', 'latitude', 'longitude']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Dynamically set required based on current language
+        current_lang = get_language()
+        if current_lang == 'nl':
+            self.fields['name_nl'].required = True
+            self.fields['name_en'].required = False
+        elif current_lang == 'en':
+            self.fields['name_nl'].required = False
+            self.fields['name_en'].required = True
+        # Descriptions remain optional regardless
+
+        # Append * to labels for required fields
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = f"{field.label} *"
+
+        # If editing an existing instance, populate translation fields
+        if self.instance and self.instance.pk:
+            try:
+                from .models import DiveLocationTranslation
+                nl_translation = self.instance.translations.filter(language__code='nl').first()
+                en_translation = self.instance.translations.filter(language__code='en').first()
+
+                if nl_translation:
+                    self.fields['name_nl'].initial = nl_translation.name
+                    self.fields['description_nl'].initial = nl_translation.description
+                if en_translation:
+                    self.fields['name_en'].initial = en_translation.name
+                    self.fields['description_en'].initial = en_translation.description
+            except Exception as e:
+                logger.error("Error loading translations for DiveLocation ID %s: %s", self.instance.pk, e)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        current_lang = get_language()
+
+        # Ensure at least one name is provided for the current language
+        if current_lang == 'nl':
+            name_nl = cleaned_data.get('name_nl', '').strip()
+            if not name_nl:
+                self.add_error('name_nl', 'This field is required for Dutch locations.')
+        elif current_lang == 'en':
+            name_en = cleaned_data.get('name_en', '').strip()
+            if not name_en:
+                self.add_error('name_en', 'This field is required for English locations.')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        location = super().save(commit=commit)
+        if commit:
+            self._save_translations(location)
+        return location
+
+    def _save_translations(self, location):
+        """Save translations for both languages."""
+        from django.utils.text import slugify
+        from .models import DiveLocationTranslation
+
+        logger.info("Starting _save_translations for dive_location ID: %s", location.id)
+
+        try:
+            # Save Dutch translation
+            nl_lang = Language.objects.get(code='nl')
+            nl_name = self.cleaned_data.get('name_nl', '').strip()
+            nl_description = self.cleaned_data.get('description_nl', '').strip()
+
+            logger.info("Dutch name: '%s', description length: %d",
+                        nl_name, len(nl_description))
+
+            if nl_name:  # Only save if name is provided
+                nl_translation, created = DiveLocationTranslation.objects.get_or_create(
+                    dive_location=location,
+                    language=nl_lang,
+                    defaults={
+                        'name': nl_name,
+                        'description': nl_description,
+                        'slug': ''
+                    }
+                )
+                if not created:
+                    nl_translation.name = nl_name
+                    nl_translation.description = nl_description
+
+                # Generate slug
+                if nl_translation.name:
+                    nl_translation.slug = slugify(nl_translation.name)
+                else:
+                    nl_translation.slug = f"location-{location.id}"
+
+                logger.info("Generated Dutch slug: '%s'", nl_translation.slug)
+
+                # Handle uniqueness conflicts per language
+                original_slug = nl_translation.slug
+                counter = 1
+                while DiveLocationTranslation.objects.filter(
+                    language=nl_lang,
+                    slug=nl_translation.slug
+                ).exclude(dive_location=location).exists():
+                    nl_translation.slug = f"{original_slug}-{counter}"
+                    counter += 1
+
+                nl_translation.save()
+                logger.info("Saved Dutch translation: name='%s', slug='%s'",
+                            nl_translation.name, nl_translation.slug)
+        except Exception as e:
+            logger.error("Error saving Dutch translation for DiveLocation ID %s: %s",
+                         location.id, e)
+
+        try:
+            # Save English translation
+            en_lang = Language.objects.get(code='en')
+            en_name = self.cleaned_data.get('name_en', '').strip()
+            en_description = self.cleaned_data.get('description_en', '').strip()
+
+            logger.info("English name: '%s', description length: %d",
+                        en_name, len(en_description))
+
+            if en_name:  # Only create/update English translation if name is provided
+                en_translation, created = DiveLocationTranslation.objects.get_or_create(
+                    dive_location=location,
+                    language=en_lang,
+                    defaults={
+                        'name': en_name,
+                        'description': en_description,
+                        'slug': ''
+                    }
+                )
+
+                if not created:
+                    en_translation.name = en_name
+                    en_translation.description = en_description
+
+                # Generate slug for English
+                if en_translation.name:
+                    en_translation.slug = slugify(en_name)
+                else:
+                    en_translation.slug = f"location-{location.id}-en"
+
+                logger.info("Generated English slug: '%s'", en_translation.slug)
+
+                # Handle uniqueness conflicts per language
+                original_slug = en_translation.slug
+                counter = 1
+                while DiveLocationTranslation.objects.filter(
+                    language=en_lang,
+                    slug=en_translation.slug
+                ).exclude(dive_location=location).exists():
+                    en_translation.slug = f"{original_slug}-{counter}"
+                    counter += 1
+
+                en_translation.save()
+                logger.info("Saved English translation: name='%s', slug='%s'",
+                            en_translation.name, en_translation.slug)
+        except Exception as e:
+            logger.error("Error saving English translation for DiveLocation ID %s: %s",
+                         location.id, e)
 
 
 class DiveLocationSuggestionForm(forms.ModelForm):
     """
     Form for suggesting edits to a DiveLocation
     """
+
     class Meta:
         model = DiveLocationSuggestion
         fields = [
@@ -265,5 +453,27 @@ class DiveLocationSuggestionForm(forms.ModelForm):
             'suggested_longitude'
         ]
         widgets = {
-            'suggested_description': forms.Textarea(attrs={'placeholder': 'Describe the suggested changes.'}),
+            'suggested_description': forms.Textarea(attrs={'rows': 4}),
         }
+
+    def __init__(self, *args, **kwargs):
+        self.location = kwargs.pop('location', None)
+        self.language = kwargs.pop('language', None)
+        super().__init__(*args, **kwargs)
+
+        if self.location and self.language:
+            # Pre-populate with current values for the specific language
+            translation = self.location.translations.filter(language=self.language).first()
+            if translation:
+                if not self.initial.get('suggested_name'):
+                    self.fields['suggested_name'].initial = translation.name
+                if not self.initial.get('suggested_description'):
+                    self.fields['suggested_description'].initial = translation.description
+
+            # Pre-populate non-translatable fields if not already set
+            if not self.initial.get('suggested_country'):
+                self.fields['suggested_country'].initial = self.location.country
+            if not self.initial.get('suggested_latitude'):
+                self.fields['suggested_latitude'].initial = self.location.latitude
+            if not self.initial.get('suggested_longitude'):
+                self.fields['suggested_longitude'].initial = self.location.longitude

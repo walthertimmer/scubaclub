@@ -27,10 +27,44 @@ class Language(models.Model):
         return self.code
 
 
+class Country(models.Model):
+    """Model for countries, with translatable names."""
+    iso_code = models.CharField(max_length=3, unique=True, help_text="ISO 3166-1 alpha-3 country code (e.g., 'NLD' for Netherlands)")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['iso_code']
+
+    def __str__(self):
+        # Default name if available, else ISO code
+        translation = self.translations.filter(language__code='nl').first()
+        return translation.name if translation else self.iso_code
+
+    def get_name_for_language(self, lang_code):
+        """Get the translated name for a specific language"""
+        translation = self.translations.filter(language__code=lang_code).first()
+        if translation:
+            return translation.name
+        # Fallback
+        fallback = self.translations.filter(language__code='nl').first()
+        return fallback.name if fallback else self.iso_code
+
+
+class CountryTranslation(models.Model):
+    """Translatable fields for Country."""
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='translations')
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, help_text="Translated name of the country")
+
+    class Meta:
+        unique_together = ('country', 'language')  # One translation per country per language
+
+    def __str__(self):
+        return f"{self.name} ({self.language.code})"
+
+
 class DiveLocation(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    country = models.CharField(max_length=128, blank=True)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True, help_text="Country where the location is based")
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     language = models.ForeignKey(Language, on_delete=models.SET_DEFAULT, default=1)
@@ -41,13 +75,65 @@ class DiveLocation(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.name} ({self.language})"
+        # Use the default language (Dutch) for display
+        translation = self.translations.filter(language__code='nl').first()
+        name = translation.name if translation else f"Location {self.id}"
+        return f"{name} (Location ID: {self.id})"
+
+    def get_name_for_language(self, lang_code):
+        """Get the translated name for a specific language, fallback to default (nl)."""
+        translation = self.translations.filter(language__code=lang_code).first()
+        if translation:
+            return translation.name
+        # Fallback to Dutch
+        fallback = self.translations.filter(language__code='nl').first()
+        return fallback.name if fallback else f"Location {self.id}"
+
+    def get_description_for_language(self, lang_code):
+        """Get the translated description for a specific language, fallback to default (nl)."""
+        translation = self.translations.filter(language__code=lang_code).first()
+        if translation:
+            return translation.description
+        # Fallback to Dutch
+        fallback = self.translations.filter(language__code='nl').first()
+        return fallback.description if fallback else ""
+
+    def get_slug_for_language(self, lang_code):
+        """Get the slug for a specific language."""
+        translation = self.translations.filter(
+            language__code=lang_code,
+            slug__isnull=False
+        ).first()
+        if translation and translation.slug:
+            return translation.slug
+        return None
 
     @classmethod
     def get_for_current_language(cls):
         """Get dive locations for the current language"""
         current_lang = get_language()
-        return cls.objects.filter(language__code=current_lang)
+        return cls.objects.filter(
+            translations__language__code=current_lang,
+            translations__name__isnull=False,
+        ).exclude(
+            translations__language__code=current_lang,
+            translations__name=''
+        ).distinct()
+
+
+class DiveLocationTranslation(models.Model):
+    """Translatable fields for DiveLocation."""
+    dive_location = models.ForeignKey(DiveLocation, on_delete=models.CASCADE, related_name='translations')
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, help_text="Translated name of the location")
+    description = models.TextField(blank=True, help_text="Translated description of the location")
+    slug = models.SlugField(blank=True, help_text="URL slug for this translation")
+
+    class Meta:
+        unique_together = ('dive_location', 'language')  # One translation per location per language
+
+    def __str__(self):
+        return f"{self.name} ({self.language.code})"
 
 
 class DiveLocationSuggestion(models.Model):
@@ -56,7 +142,12 @@ class DiveLocationSuggestion(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
-    original_location = models.ForeignKey(DiveLocation, on_delete=models.CASCADE, related_name='suggestions')
+    original_location = models.ForeignKey(DiveLocation,
+                                          on_delete=models.CASCADE,
+                                          related_name='suggestions')
+    target_language = models.ForeignKey(Language,
+                                        on_delete=models.CASCADE,
+                                        help_text="Language for this suggestion")
     suggested_by = models.ForeignKey(User, on_delete=models.CASCADE)
     suggested_name = models.CharField(max_length=255, blank=True)
     suggested_description = models.TextField(blank=True)
@@ -67,17 +158,53 @@ class DiveLocationSuggestion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Suggestion for {self.original_location.name} by {self.suggested_by.username}"
+        return f"Suggestion for {self.original_location} ({self.target_language.code}) by {self.suggested_by.username}"
 
     def apply_changes(self):
         """Apply approved changes to the original location."""
         if self.status == 'approved':
-            self.original_location.name = self.suggested_name or self.original_location.name
-            self.original_location.description = self.suggested_description or self.original_location.description
-            self.original_location.country = self.suggested_country or self.original_location.country
-            self.original_location.latitude = self.suggested_latitude if self.suggested_latitude is not None else self.original_location.latitude
-            self.original_location.longitude = self.suggested_longitude if self.suggested_longitude is not None else self.original_location.longitude
+            # Update non-translatable fields
+            if self.suggested_country:
+                self.original_location.country = self.suggested_country
+            if self.suggested_latitude is not None:
+                self.original_location.latitude = self.suggested_latitude
+            if self.suggested_longitude is not None:
+                self.original_location.longitude = self.suggested_longitude
             self.original_location.save()
+
+            # Update or create translation
+            if self.suggested_name or self.suggested_description:
+                translation, created = DiveLocationTranslation.objects.get_or_create(
+                    dive_location=self.original_location,
+                    language=self.target_language,
+                    defaults={
+                        'name': self.suggested_name or f"Location {self.original_location.id}",
+                        'description': self.suggested_description or '',
+                        'slug': ''
+                    }
+                )
+
+                if not created:
+                    if self.suggested_name:
+                        translation.name = self.suggested_name
+                    if self.suggested_description:
+                        translation.description = self.suggested_description
+
+                # Generate slug
+                if translation.name:
+                    translation.slug = slugify(translation.name)
+
+                    # Handle uniqueness conflicts
+                    original_slug = translation.slug
+                    counter = 1
+                    while DiveLocationTranslation.objects.filter(
+                        language=self.target_language,
+                        slug=translation.slug
+                    ).exclude(dive_location=self.original_location).exists():
+                        translation.slug = f"{original_slug}-{counter}"
+                        counter += 1
+
+                translation.save()
 
 
 class DiveClub(models.Model):
@@ -89,9 +216,11 @@ class DiveClub(models.Model):
     website = models.URLField(blank=True,
                               help_text="Enter the full URL, including 'http://' or 'https://', e.g., https://scubaclub.org")
     email = models.EmailField(blank=True)
-    country = models.CharField(max_length=128,
-                               blank=True,
-                               help_text="Nation or country where the club is based")
+    country = models.ForeignKey(Country,
+                                on_delete=models.SET_NULL,
+                                null=True,
+                                blank=True,
+                                help_text="Country where the club is based")
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(User, related_name='dive_clubs', blank=True)

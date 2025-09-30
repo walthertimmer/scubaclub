@@ -19,9 +19,21 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseForbidden
-from .models import DiveClub, DiveClubTranslation, DiveEvent, DiveLocation, Language, DiveLocationSuggestion
-from .forms import CustomUserCreationForm, DiveClubForm, DiveEventForm, DiveLocationForm, DiveLocationSuggestionForm
+from .models import (
+    DiveClub,
+    DiveClubTranslation,
+    DiveEvent,
+    DiveLocation,
+    Language,
+    DiveLocationSuggestion
+)
+from .forms import (
+    CustomUserCreationForm,
+    DiveClubForm,
+    DiveEventForm,
+    DiveLocationForm,
+    DiveLocationSuggestionForm
+)
 
 
 logger = logging.getLogger("scubaclub.views")
@@ -86,11 +98,13 @@ def registration_complete(request):
 
 
 class CustomLoginView(LoginView):
+    """Custom login view using Django's built-in LoginView."""
     authentication_form = AuthenticationForm
     template_name = "registration/login.html"
 
 
 class CustomLogoutView(LogoutView):
+    """Custom logout view using Django's built-in LogoutView."""
     next_page = '/'
 
 
@@ -100,7 +114,8 @@ def dive_clubs(request):
     logger.info("Current language detected as: %s", current_lang)
 
     clubs = DiveClub.get_for_current_language()
-    logger.info("views.dive_clubs Found %d clubs for current language %s", clubs.count(), current_lang)
+    logger.info("views.dive_clubs Found %d clubs for current language %s",
+                clubs.count(), current_lang)
 
     # Filter to only include clubs with valid slugs and prepare context
     clubs_with_slugs = []
@@ -129,8 +144,19 @@ def upcoming_dives(request):
 
 def dive_locations(request):
     """Render the dive locations page."""
+    current_lang = get_language()
     locations = DiveLocation.get_for_current_language()
-    return render(request, "website/dive_locations.html", {"locations": locations})
+
+    # Prepare context with translated data
+    locations_with_translations = []
+    for location in locations:
+        location.name = location.get_name_for_language(current_lang)
+        location.description = location.get_description_for_language(current_lang)
+        location.slug = location.get_slug_for_language(current_lang)
+        locations_with_translations.append(location)
+
+    return render(request, "website/dive_locations.html",
+                  {"locations": locations_with_translations})
 
 
 def club_detail(request, club_slug):
@@ -214,6 +240,7 @@ def request_join_club(request, club_id):
 
 @login_required
 def approve_member(request, club_id, user_id):
+    """Approve a user's request to join a dive club."""
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.user not in club.admins.all():
         return HttpResponseForbidden("You are not an admin of this club.")
@@ -231,6 +258,7 @@ def approve_member(request, club_id, user_id):
 
 @login_required
 def reject_member(request, club_id, user_id):
+    """Reject a user's request to join a dive club."""
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.user not in club.admins.all():
         return HttpResponseForbidden("You are not an admin of this club.")
@@ -247,6 +275,7 @@ def reject_member(request, club_id, user_id):
 
 @login_required
 def remove_member(request, club_id, user_id):
+    """Remove a member from a dive club."""
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.user not in club.admins.all():
         return HttpResponseForbidden("You are not an admin of this club.")
@@ -263,6 +292,7 @@ def remove_member(request, club_id, user_id):
 
 @login_required
 def promote_to_admin(request, club_id, user_id):
+    """Promote a member to admin in a dive club."""
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.user not in club.admins.all():
         return HttpResponseForbidden("You are not an admin of this club.")
@@ -282,6 +312,7 @@ def promote_to_admin(request, club_id, user_id):
 
 @login_required
 def remove_admin(request, club_id, user_id):
+    """Remove admin rights from a member in a dive club."""
     club = get_object_or_404(DiveClub, pk=club_id)
     if request.user not in club.admins.all():
         return HttpResponseForbidden("You are not an admin of this club.")
@@ -326,7 +357,8 @@ def create_dive_club(request):
                 return redirect('website:club_detail', club_slug=club_slug)
             else:
                 # Fallback if no slug (shouldn't happen with required names)
-                logger.warning("No slug found for newly created club ID %s in language %s", club.id, current_lang)
+                logger.warning("No slug found for newly created club ID %s in language %s",
+                               club.id, current_lang)
                 return redirect('website:dive_clubs')
     else:
         form = DiveClubForm()
@@ -439,56 +471,101 @@ def cancel_dive(request, event_id):
         # Optional: Add email notifications to participants here
         return redirect('website:event_detail', event_id=event.id)
 
-    return render(request, 'website/confirm_dive_cancel.html', {'event': event})
+    return render(request, 'website/confirm_dive_cancel.html', {
+        'event': event
+    })
 
 
 @login_required
 def event_detail(request, event_id):
+    """Render the detail page for a specific dive event."""
     event = get_object_or_404(DiveEvent, pk=event_id)
-    # Optional: Add join/leave logic here (e.g., if POST and not full, add/remove user from participants)
-    return render(request, 'website/event_detail.html', {'event': event})
+    return render(request, 'website/event_detail.html', {
+        'event': event
+    })
 
 
 @login_required
 def create_dive_location(request):
+    """Create a new dive location."""
     if request.method == 'POST':
         form = DiveLocationForm(request.POST)
         if form.is_valid():
             location = form.save(commit=False)
             location.created_by = request.user
             location.language = Language.objects.get(code=get_language())
-            location.save()
-            return redirect('website:dive_locations')
+            try:
+                form.save(commit=True)
+                return redirect('website:dive_locations')
+            except Exception as e:
+                logger.error("Error saving new DiveLocation: %s", e)
+                form.add_error(None,
+                               _("""An error occurred while saving the location.
+                                 Please try again."""))
     else:
         form = DiveLocationForm()
     return render(request, 'website/create_dive_location.html', {'form': form})
 
 
 @login_required
-def suggest_location_edit(request, location_id):
-    location = get_object_or_404(DiveLocation, pk=location_id)
+def suggest_location_edit(request, location_slug):
+    """Suggest edits to an existing dive location."""
+    current_lang = get_language()
+
+    # Get location by slug
+    location = get_object_or_404(
+        DiveLocation,
+        translations__language__code=current_lang,
+        translations__slug=location_slug
+    )
+
+    # Set translated name for template
+    location.name = location.get_name_for_language(current_lang)
+
     if request.method == 'POST':
         form = DiveLocationSuggestionForm(request.POST)
         if form.is_valid():
             suggestion = form.save(commit=False)
             suggestion.original_location = location
             suggestion.suggested_by = request.user
+            suggestion.target_language = Language.objects.get(code=current_lang)
             suggestion.save()
-            return redirect('website:location_detail', location_id=location.id)
+            return redirect('website:location_detail', location_slug=location_slug)
     else:
+        # Get current translation for the location in the current language
+        current_translation = location.translations \
+            .filter(language__code=current_lang).first()
+
         # Pre-fill the form with current location values
-        form = DiveLocationSuggestionForm(initial={
-            'suggested_name': location.name,
-            'suggested_description': location.description,
+        initial_data = {
             'suggested_country': location.country,
             'suggested_latitude': location.latitude,
             'suggested_longitude': location.longitude,
-        })
-    return render(request, 'website/suggest_location_edit.html', {'form': form, 'location': location})
+        }
+
+        # Add translated fields if translation exists
+        if current_translation:
+            initial_data['suggested_name'] = current_translation.name
+            initial_data['suggested_description'] = current_translation.description
+
+        form = DiveLocationSuggestionForm(
+            initial=initial_data,
+            location=location,
+            language=Language.objects.get(code=current_lang)
+        )
+
+    # Set the location name for template display
+    location.name = location.get_name_for_language(current_lang)
+
+    return render(request, 'website/suggest_location_edit.html', {
+        'form': form,
+        'location': location
+    })
 
 
 @login_required
 def review_location_suggestions(request):
+    """Admin view to review pending location suggestions."""
     if not request.user.is_superuser:  # Or check for admin role
         return HttpResponseForbidden("Only admins can review suggestions.")
     suggestions = DiveLocationSuggestion.objects.filter(status='pending')
@@ -497,6 +574,7 @@ def review_location_suggestions(request):
 
 @login_required
 def approve_location_suggestion(request, suggestion_id):
+    """Approve a location suggestion and apply changes."""
     if not request.user.is_superuser:
         return HttpResponseForbidden("Only admins can approve suggestions.")
     suggestion = get_object_or_404(DiveLocationSuggestion, pk=suggestion_id)
@@ -508,6 +586,7 @@ def approve_location_suggestion(request, suggestion_id):
 
 @login_required
 def reject_location_suggestion(request, suggestion_id):
+    """Reject a location suggestion."""
     if not request.user.is_superuser:
         return HttpResponseForbidden("Only admins can reject suggestions.")
     suggestion = get_object_or_404(DiveLocationSuggestion, pk=suggestion_id)
@@ -516,10 +595,34 @@ def reject_location_suggestion(request, suggestion_id):
     return redirect('website:review_location_suggestions')
 
 
-def location_detail(request, location_id):
-    location = get_object_or_404(DiveLocation, pk=location_id)
-    suggestions = location.suggestions.filter(status='pending') if request.user.is_superuser else None
-    return render(request, 'website/location_detail.html', {'location': location, 'suggestions': suggestions})
+def location_detail(request, location_slug):
+    """Render the detail page for a specific dive location."""
+    current_lang = get_language()
+
+    try:
+        # Get location by slug for current language
+        location = get_object_or_404(
+            DiveLocation,
+            translations__language__code=current_lang,
+            translations__slug=location_slug
+        )
+    except Http404:
+        # If location doesn't exist in current language, redirect to locations overview
+        return redirect('website:dive_locations')
+
+    # Set translated fields for template
+    location.name = location.get_name_for_language(current_lang)
+    location.description = location.get_description_for_language(current_lang)
+    location.slug = location.get_slug_for_language(current_lang)
+
+    suggestions = None
+    if request.user.is_superuser:
+        suggestions = location.suggestions.filter(status='pending')
+
+    return render(request, 'website/location_detail.html', {
+        'location': location,
+        'suggestions': suggestions
+    })
 
 
 def privacy(request):
