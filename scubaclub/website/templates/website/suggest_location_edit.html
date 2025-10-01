@@ -4,11 +4,64 @@
 {% block title %}{% trans "Suggest edit for dive location" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Suggest Edit for" %} {{ location.name }}</h2>
+<h2>{% trans "Suggest edit for" %} {{ location.name }}</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="cta-button">{% trans "Submit suggestion" %}</button>
 </form>
 <a href="{% url 'website:location_detail' location_slug=location.slug %}">{% trans "Cancel" %}</a>
+
+<script>
+// Translation data from the server
+const translationsData = {{ translations_data|safe }};
+const locationData = {
+    country: {{ location.country.id|default:'null' }},
+    latitude: {{ location.latitude|default:'null' }},
+    longitude: {{ location.longitude|default:'null' }}
+};
+
+function updateFormFields(languageCode) {
+    // Get form fields
+    const nameField = document.getElementById('id_suggested_name');
+    const descriptionField = document.getElementById('id_suggested_description');
+    const countryField = document.getElementById('id_suggested_country');
+    const latitudeField = document.getElementById('id_suggested_latitude');
+    const longitudeField = document.getElementById('id_suggested_longitude');
+
+    // Update translation fields
+    if (translationsData[languageCode]) {
+        nameField.value = translationsData[languageCode].name || '';
+        descriptionField.value = translationsData[languageCode].description || '';
+        nameField.placeholder = '';
+        descriptionField.placeholder = '';
+    } else {
+        // No translation exists for this language
+        nameField.value = '';
+        descriptionField.value = '';
+        nameField.placeholder = `Add ${languageCode.toUpperCase()} name for this location`;
+        descriptionField.placeholder = `Add ${languageCode.toUpperCase()} description for this location`;
+    }
+
+    // Always populate non-translatable fields with current values
+    if (countryField && locationData.country) {
+        countryField.value = locationData.country;
+    }
+    if (latitudeField && locationData.latitude) {
+        latitudeField.value = locationData.latitude;
+    }
+    if (longitudeField && locationData.longitude) {
+        longitudeField.value = locationData.longitude;
+    }
+}
+
+// Initialize form on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const languageField = document.getElementById('id_target_language');
+    if (languageField && languageField.value) {
+        updateFormFields(languageField.options[languageField.selectedIndex].text.toLowerCase());
+    }
+});
+</script>
+
 {% endblock %}

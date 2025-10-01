@@ -79,6 +79,7 @@ def register(request):
 
 
 def activate(request, uidb64, token):
+    """Activate user account from email link."""
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
@@ -519,18 +520,21 @@ def suggest_location_edit(request, location_slug):
         translations__slug=location_slug
     )
 
-    # Set translated name for template
+    # Set translated variables for template
     location.name = location.get_name_for_language(current_lang)
+    location.slug = location.get_slug_for_language(current_lang)
+
 
     if request.method == 'POST':
-        form = DiveLocationSuggestionForm(request.POST)
+        form = DiveLocationSuggestionForm(request.POST, location=location)
         if form.is_valid():
             suggestion = form.save(commit=False)
             suggestion.original_location = location
             suggestion.suggested_by = request.user
-            suggestion.target_language = Language.objects.get(code=current_lang)
+            # suggestion.target_language = Language.objects.get(code=current_lang)
             suggestion.save()
-            return redirect('website:location_detail', location_slug=location_slug)
+            return redirect('website:location_detail',
+                            location_slug=location_slug)
     else:
         # Get current translation for the location in the current language
         current_translation = location.translations \
@@ -550,16 +554,22 @@ def suggest_location_edit(request, location_slug):
 
         form = DiveLocationSuggestionForm(
             initial=initial_data,
-            location=location,
-            language=Language.objects.get(code=current_lang)
+            location=location
+            # ,language=Language.objects.get(code=current_lang)
         )
 
-    # Set the location name for template display
-    location.name = location.get_name_for_language(current_lang)
+    # Get all existing translations for JavaScript
+    translations_data = {}
+    for translation in location.translations.all():
+        translations_data[translation.language.code] = {
+            'name': translation.name,
+            'description': translation.description
+        }
 
     return render(request, 'website/suggest_location_edit.html', {
         'form': form,
-        'location': location
+        'location': location,
+        'translations_data': translations_data
     })
 
 
@@ -569,7 +579,18 @@ def review_location_suggestions(request):
     if not request.user.is_superuser:  # Or check for admin role
         return HttpResponseForbidden("Only admins can review suggestions.")
     suggestions = DiveLocationSuggestion.objects.filter(status='pending')
-    return render(request, 'website/review_location_suggestions.html', {'suggestions': suggestions})
+    current_lang = get_language()
+
+    # Set translated fields for each suggestion's location
+    for suggestion in suggestions:
+        suggestion.original_location.name = suggestion.original_location \
+            .get_name_for_language(current_lang)
+        suggestion.original_location.description = suggestion.original_location \
+            .get_description_for_language(current_lang)
+
+    return render(request, 'website/review_location_suggestions.html', {
+        'suggestions': suggestions
+    })
 
 
 @login_required

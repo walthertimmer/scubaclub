@@ -1,0 +1,10 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Page not found" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Page not found" %}</h2>
+<p>{% trans "The page you're looking for doesn't exist." %}</p>
+<p><a href="{% url 'website:home' %}">{% trans "Return to home" %}</a></p>
+{% endblock %}

@@ -4,7 +4,7 @@
 {% block title %}{% trans "Dive location details" %}{% endblock %}
 
 {% block content %}
-<h2>{{ location.name }}</h2>
+<h2>{% trans "Dive location" %} {{ location.name }}</h2>
 <p><strong>{% trans "Description" %}:</strong> {{ location.description }}</p>
 <p><strong>{% trans "Country" %}:</strong> {{ location.country }}</p>
 {% if location.latitude and location.longitude %}
@@ -17,6 +17,7 @@
 
 {% if suggestions %}
     <h3>{% trans "Pending suggestions" %}</h3>
+    <p><a href="{% url 'website:review_location_suggestions' %}">Review all pending suggestions</a></p>
     <ul>
         {% for suggestion in suggestions %}
             <li>{{ suggestion.suggested_name }} - <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">Approve</a> | <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">Reject</a></li>

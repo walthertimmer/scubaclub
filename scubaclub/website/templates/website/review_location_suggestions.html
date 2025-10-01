@@ -1,18 +1,20 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Review Location Suggestions" %}{% endblock %}
+{% block title %}{% trans "Review location suggestions" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Pending Location Edit Suggestions" %}</h2>
+<h2>{% trans "Pending location edit suggestions" %}</h2>
 <ul>
     {% for suggestion in suggestions %}
         <li>
-            <strong>{{ suggestion.original_location.name }}</strong> by {{ suggestion.suggested_by.username }}<br>
+            <strong>{% trans "Location" %}:</strong> {{ suggestion.original_location.name }}<br>
+            <strong>{% trans "Language" %}:</strong> {{ suggestion.target_language.name }} ({{ suggestion.target_language.code }})<br>
+            <strong>{% trans "Suggested by" %}:</strong> {{ suggestion.suggested_by.username }}<br>
             <em>{% trans "Submitted on" %}: {{ suggestion.created_at|date:"F j, Y H:i" }}</em><br>
 
             <!-- Display changes in a simple diff format -->
-            <h4>{% trans "Proposed Changes" %}:</h4>
+            <h4>{% trans "Proposed changes" %}:</h4>
             <ul>
                 {% if suggestion.suggested_name %}
                     <li><strong>{% trans "Name" %}:</strong> {% trans "Original" %}: {{ suggestion.original_location.name }} → {% trans "Suggested" %}: {{ suggestion.suggested_name }}</li>
@@ -34,8 +36,8 @@
                 {% endif %}
             </ul>
 
-            <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">Approve</a> |
-            <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">Reject</a>
+            <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">{% trans "Approve" %}</a> |
+            <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">{% trans "Reject" %}</a>
         </li>
     {% empty %}
         <li>{% trans "No pending suggestions." %}</li>

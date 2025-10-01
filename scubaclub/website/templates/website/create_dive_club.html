@@ -1,14 +1,15 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Create Dive Club" %}{% endblock %}
+{% block title %}{% trans "Create dive club" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Create a New Dive Club" %}</h2>
+<h2>{% trans "Create a new dive club" %}</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="cta-button">{% trans "Create Club" %}</button>
+    <button type="submit" class="cta-button">{% trans "Create club" %}</button>
+    <a href="{% url 'website:dive_clubs' %}">{% trans "Cancel" %}</a>
 </form>
 <p>{% trans "Only the fields with a * are required." %}</p>
 {% endblock %}

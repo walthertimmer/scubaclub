@@ -1,0 +1,10 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Server error" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Server error" %}</h2>
+<p>{% trans "Something went wrong on our end. Please try again later." %}</p>
+<p><a href="{% url 'website:home' %}">{% trans "Return to home" %}</a></p>
+{% endblock %}

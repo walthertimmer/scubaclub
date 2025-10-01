@@ -1,7 +1,7 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Dive Club Details" %}{% endblock %}
+{% block title %}{% trans "Dive club details" %}{% endblock %}
 
 {% block content %}
 <h2>{% trans "Dive club: " %}{{ club.name }}</h2>
@@ -18,7 +18,7 @@
 <p><strong>{% trans "Municipality:" %}</strong> {{ club.municipality }}</p>
 {% endif %}
 {% if club.postal_code %}
-<p><strong>{% trans "Postal Code:" %}</strong> {{ club.postal_code }}</p>
+<p><strong>{% trans "Postal code:" %}</strong> {{ club.postal_code }}</p>
 {% endif %}
 {% if club.country %}
 <p><strong>{% trans "Country:" %}</strong> {{ club.country }}</p>
@@ -41,7 +41,7 @@
           {% if user in admins %}
           <form method="post" action="{% url 'website:remove_admin' club.id admin.id %}" style="display:inline;">
             {% csrf_token %}
-            <button type="submit" class="cta-button" style="background: red;">{% trans "Remove Admin" %}</button>
+            <button type="submit" class="cta-button" style="background: red;">{% trans "Remove admin" %}</button>
           </form>
           {% endif %}
         </li>
@@ -95,7 +95,7 @@
           {% if member not in admins %}
             <form method="post" action="{% url 'website:promote_to_admin' club.id member.id %}" style="display:inline;">
               {% csrf_token %}
-              <button type="submit" class="cta-button">{% trans "Promote to Admin" %}</button>
+              <button type="submit" class="cta-button">{% trans "Promote to admin" %}</button>
             </form>
           {% endif %}
           <form method="post" action="{% url 'website:remove_member' club.id member.id %}" style="display:inline;">
@@ -123,7 +123,7 @@
 
 <h3>{% trans "Upcoming Events" %}</h3>
 {% if user in members or user in admins %}
-  <a href="{% url 'website:create_dive_event_with_club' club.id %}" class="cta-button">{% trans "Create Dive" %}</a>
+  <a href="{% url 'website:create_dive_event_with_club' club.id %}" class="cta-button">{% trans "Create dive" %}</a>
 {% endif %}
 {% if club_events %}
   <ul>
@@ -135,7 +135,7 @@
   <p>{% trans "No upcoming events." %}</p>
 {% endif %}
 
-<h3>{% trans "Dive Locations" %}</h3>
+<h3>{% trans "Dive locations" %}</h3>
 {% if club_locations %}
   <ul>
     {% for location in club_locations %}
@@ -148,7 +148,7 @@
 
 {% if user in admins %}
   <h3>{% trans "Manage Club" %}</h3>
-  <a href="{% url 'website:edit_dive_club' club_slug %}" class="cta-button">{% trans "Edit Club" %}</a>
+  <a href="{% url 'website:edit_dive_club' club_slug %}" class="cta-button">{% trans "Edit club" %}</a>
 {% endif %}
 
 {% if not user.is_authenticated %}
@@ -156,7 +156,5 @@
 {% endif %}
 
 <a href="{% url 'website:dive_clubs' %}">{% trans "Back to overview of clubs" %}</a>
-
-
 
 {% endblock %}

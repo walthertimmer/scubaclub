@@ -443,9 +443,16 @@ class DiveLocationSuggestionForm(forms.ModelForm):
     Form for suggesting edits to a DiveLocation
     """
 
+    target_language = forms.ModelChoiceField(
+        queryset=Language.objects.all(),
+        label="Language",
+        help_text="Select the language for this suggestion"
+    )
+
     class Meta:
         model = DiveLocationSuggestion
         fields = [
+            'target_language',
             'suggested_name',
             'suggested_description',
             'suggested_country',
@@ -458,22 +465,36 @@ class DiveLocationSuggestionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.location = kwargs.pop('location', None)
-        self.language = kwargs.pop('language', None)
+        kwargs.pop('language', None)
         super().__init__(*args, **kwargs)
 
-        if self.location and self.language:
-            # Pre-populate with current values for the specific language
-            translation = self.location.translations.filter(language=self.language).first()
-            if translation:
-                if not self.initial.get('suggested_name'):
-                    self.fields['suggested_name'].initial = translation.name
-                if not self.initial.get('suggested_description'):
-                    self.fields['suggested_description'].initial = translation.description
+        if self.location:
+            # Set current language as default
+            current_lang = get_language()
+            try:
+                default_language = Language.objects.get(code=current_lang)
+                self.fields['target_language'].initial = default_language
+            except Language.DoesNotExist:
+                pass
 
-            # Pre-populate non-translatable fields if not already set
+            # Pre-populate non-translatable fields
             if not self.initial.get('suggested_country'):
                 self.fields['suggested_country'].initial = self.location.country
             if not self.initial.get('suggested_latitude'):
                 self.fields['suggested_latitude'].initial = self.location.latitude
             if not self.initial.get('suggested_longitude'):
                 self.fields['suggested_longitude'].initial = self.location.longitude
+
+        # Add JavaScript to update form fields when language changes
+        self.fields['target_language'].widget.attrs['onchange'] = 'updateFormFields(this.value)'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        target_language = cleaned_data.get('target_language')
+
+        if self.location and target_language:
+            # Pre-populate fields based on selected language if form is being rendered
+            # This will be handled by JavaScript on the frontend
+            pass
+
+        return cleaned_data

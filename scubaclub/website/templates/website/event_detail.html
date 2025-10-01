@@ -1,10 +1,10 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Dive Details" %}{% endblock %}
+{% block title %}{% trans "Dive details" %}{% endblock %}
 
 {% block content %}
-<h2>{{ event.title }}</h2>
+<h2>{% trans "Dive" %} {{ event.title }}</h2>
 {% if event.is_cancelled %}
     <p style="color: red;"><strong>{% trans "This dive has been cancelled." %}</strong></p>
 {% endif %}
@@ -24,12 +24,12 @@
   {% if event.club %}
     {% if user in event.club.admins.all %}
       <a href="{% url 'website:edit_dive' event.id %}" class="cta-button">{% trans "Edit Dive" %}</a>
-      <a href="{% url 'website:cancel_dive' event.id %}" class="cta-button" style="background: red;">{% trans "Cancel Dive" %}</a>
+      <a href="{% url 'website:cancel_dive' event.id %}">{% trans "Cancel dive" %}</a>
     {% endif %}
   {% else %}
     {% if user == event.organizer %}
       <a href="{% url 'website:edit_dive' event.id %}" class="cta-button">{% trans "Edit Dive" %}</a>
-      <a href="{% url 'website:cancel_dive' event.id %}" class="cta-button" style="background: red;">{% trans "Cancel Dive" %}</a>
+      <a href="{% url 'website:cancel_dive' event.id %}">{% trans "Cancel dive" %}</a>
     {% endif %}
   {% endif %}
 {% endif %}
