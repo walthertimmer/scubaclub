@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-25 00:21+0200\n"
+"POT-Creation-Date: 2025-10-01 23:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1524,20 +1524,20 @@ msgstr ""
 msgid "Connect, get help, or contribute"
 msgstr ""
 
-#: scubaclub/website/forms.py:17
+#: scubaclub/website/forms.py:24
 msgid ""
 "Required. 150 characters or fewer. Only letters and numbers are allowed."
 msgstr ""
 
-#: scubaclub/website/forms.py:23
+#: scubaclub/website/forms.py:30
 msgid "Only letters and numbers are allowed in the username."
 msgstr ""
 
-#: scubaclub/website/models.py:18
+#: scubaclub/website/models.py:22
 msgid "English"
 msgstr ""
 
-#: scubaclub/website/models.py:19
+#: scubaclub/website/models.py:23
 msgid "Dutch"
 msgstr ""
 
@@ -1548,8 +1548,41 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+#: scubaclub/website/templates/website/400.html:4
+#: scubaclub/website/templates/website/400.html:7
+msgid "Access denied"
+msgstr ""
+
+#: scubaclub/website/templates/website/400.html:8
+msgid "You don't have permission to access this page."
+msgstr ""
+
+#: scubaclub/website/templates/website/400.html:9
+#: scubaclub/website/templates/website/404.html:9
+#: scubaclub/website/templates/website/500.html:9
+msgid "Return to home"
+msgstr ""
+
+#: scubaclub/website/templates/website/404.html:4
+#: scubaclub/website/templates/website/404.html:7
+msgid "Page not found"
+msgstr ""
+
+#: scubaclub/website/templates/website/404.html:8
+msgid "The page you're looking for doesn't exist."
+msgstr ""
+
+#: scubaclub/website/templates/website/500.html:4
+#: scubaclub/website/templates/website/500.html:7
+msgid "Server error"
+msgstr ""
+
+#: scubaclub/website/templates/website/500.html:8
+msgid "Something went wrong on our end. Please try again later."
+msgstr ""
+
 #: scubaclub/website/templates/website/activitation_invalid.html:4
-msgid "Activation Failed"
+msgid "Activation failed"
 msgstr ""
 
 #: scubaclub/website/templates/website/activitation_invalid.html:5
@@ -1577,17 +1610,14 @@ msgstr ""
 #: scubaclub/website/templates/website/base.html:29
 #: scubaclub/website/templates/website/dive_clubs.html:4
 #: scubaclub/website/templates/website/dive_clubs.html:7
-msgid "Dive Clubs"
+msgid "Dive clubs"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:30
-#: scubaclub/website/templates/website/upcoming_dives.html:4
-#: scubaclub/website/templates/website/upcoming_dives.html:7
-msgid "Upcoming Dives"
+msgid "Upcoming dives"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:31
-#: scubaclub/website/templates/website/club_detail.html:115
 #: scubaclub/website/templates/website/dive_locations.html:4
 #: scubaclub/website/templates/website/dive_locations.html:7
 msgid "Dive Locations"
@@ -1606,11 +1636,11 @@ msgid "contact"
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:4
-msgid "Dive Club Details"
+msgid "Dive club details"
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:7
-msgid "Dive Club: "
+msgid "Dive club: "
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:10
@@ -1618,103 +1648,145 @@ msgid "Description:"
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:13
-msgid "Admins"
+msgid "Contact Information"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:15
+msgid "Address:"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:18
+msgid "Municipality:"
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:21
-msgid "Remove Admin"
+msgid "Postal code:"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:28
+#: scubaclub/website/templates/website/club_detail.html:24
+msgid "Country:"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:27
+msgid "Telephone:"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:30
+msgid "Website:"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:33
+#: scubaclub/website/templates/website/contact.html:9
+msgid "Email:"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:36
+msgid "Admins"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:44
+msgid "Remove admin"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:51
 msgid "No admins."
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:34
+#: scubaclub/website/templates/website/club_detail.html:57
 msgid "Request to Join"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:39
+#: scubaclub/website/templates/website/club_detail.html:62
 msgid "Your request to join is pending approval."
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:43
+#: scubaclub/website/templates/website/club_detail.html:66
 msgid "You are a member of this club."
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:47
+#: scubaclub/website/templates/website/club_detail.html:70
 msgid "Pending Members"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:54
+#: scubaclub/website/templates/website/club_detail.html:77
+#: scubaclub/website/templates/website/review_location_suggestions.html:39
 msgid "Approve"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:58
+#: scubaclub/website/templates/website/club_detail.html:81
+#: scubaclub/website/templates/website/review_location_suggestions.html:40
 msgid "Reject"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:64
+#: scubaclub/website/templates/website/club_detail.html:87
 msgid "No pending members."
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:67
-#: scubaclub/website/templates/website/club_detail.html:89
+#: scubaclub/website/templates/website/club_detail.html:90
+#: scubaclub/website/templates/website/club_detail.html:112
 msgid "Members"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:75
-msgid "Promote to Admin"
-msgstr ""
-
-#: scubaclub/website/templates/website/club_detail.html:80
-msgid "Remove"
-msgstr ""
-
-#: scubaclub/website/templates/website/club_detail.html:86
-#: scubaclub/website/templates/website/club_detail.html:97
-msgid "No members yet."
-msgstr ""
-
-#: scubaclub/website/templates/website/club_detail.html:101
-msgid "Upcoming Events"
+#: scubaclub/website/templates/website/club_detail.html:98
+msgid "Promote to admin"
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:103
-#: scubaclub/website/templates/website/create_dive.html:12
-msgid "Create Dive"
+msgid "Remove"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:112
-msgid "No upcoming events."
+#: scubaclub/website/templates/website/club_detail.html:109
+#: scubaclub/website/templates/website/club_detail.html:120
+msgid "No members yet."
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:123
-msgid "No associated locations."
+#: scubaclub/website/templates/website/club_detail.html:124
+msgid "Upcoming Events"
 msgstr ""
 
-#: scubaclub/website/templates/website/club_detail.html:127
-msgid "Manage Club"
-msgstr ""
-
-#: scubaclub/website/templates/website/club_detail.html:128
-msgid "Edit Club"
-msgstr ""
-
-#: scubaclub/website/templates/website/club_detail.html:132
-msgid "To request to join this club or create a club dive event, please"
-msgstr ""
-
-#: scubaclub/website/templates/website/club_detail.html:132
-msgid "log in"
+#: scubaclub/website/templates/website/club_detail.html:126
+#: scubaclub/website/templates/website/create_dive.html:53
+msgid "Create dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:135
-msgid "Back to Clubs"
+msgid "No upcoming events."
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:138
+msgid "Dive locations"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:146
+msgid "No associated locations."
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:150
+msgid "Manage Club"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:151
+msgid "Edit club"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:155
+msgid "To request to join this club or create a club dive event, please"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:155
+msgid "log in"
+msgstr ""
+
+#: scubaclub/website/templates/website/club_detail.html:158
+msgid "Back to overview of clubs"
 msgstr ""
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:4
-#: scubaclub/website/templates/website/confirm_dive_cancel.html:7
 msgid "Confirm Cancellation"
+msgstr ""
+
+#: scubaclub/website/templates/website/confirm_dive_cancel.html:7
+msgid "Confirm cancellation"
 msgstr ""
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:8
@@ -1726,11 +1798,11 @@ msgid "This action cannot be undone."
 msgstr ""
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:13
-msgid "Yes, Cancel Dive"
+msgid "Yes, cancel dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:14
-msgid "No, Go Back"
+msgid "No, go back"
 msgstr ""
 
 #: scubaclub/website/templates/website/contact.html:4
@@ -1742,34 +1814,48 @@ msgstr ""
 msgid "If you have any questions or feedback, feel free to reach out!"
 msgstr ""
 
-#: scubaclub/website/templates/website/contact.html:9
-msgid "Email:"
-msgstr ""
-
 #: scubaclub/website/templates/website/create_dive.html:4
-msgid "Create Dive Event"
-msgstr ""
-
 #: scubaclub/website/templates/website/create_dive.html:7
-msgid "Create a Dive Event"
+msgid "Create a dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/create_dive.html:8
 msgid ""
 "Select a club to create a club dive (only if you're a member or admin), or "
-"leave it blank for an open dive."
+"leave it blank for an open dive that will be available to all."
+msgstr ""
+
+#: scubaclub/website/templates/website/create_dive.html:30
+msgid "If your desired location is not listed,"
+msgstr ""
+
+#: scubaclub/website/templates/website/create_dive.html:30
+msgid "create a new dive location"
+msgstr ""
+
+#: scubaclub/website/templates/website/create_dive.html:54
+#: scubaclub/website/templates/website/create_dive_club.html:12
+#: scubaclub/website/templates/website/edit_dive.html:13
+#: scubaclub/website/templates/website/edit_dive_club.html:13
+#: scubaclub/website/templates/website/suggest_location_edit.html:13
+msgid "Cancel"
 msgstr ""
 
 #: scubaclub/website/templates/website/create_dive_club.html:4
-msgid "Create Dive Club"
+msgid "Create dive club"
 msgstr ""
 
 #: scubaclub/website/templates/website/create_dive_club.html:7
-msgid "Create a New Dive Club"
+#: scubaclub/website/templates/website/dive_clubs.html:9
+msgid "Create a new dive club"
 msgstr ""
 
 #: scubaclub/website/templates/website/create_dive_club.html:11
-msgid "Create Club"
+msgid "Create club"
+msgstr ""
+
+#: scubaclub/website/templates/website/create_dive_club.html:14
+msgid "Only the fields with a * are required."
 msgstr ""
 
 #: scubaclub/website/templates/website/create_dive_location.html:4
@@ -1782,10 +1868,6 @@ msgstr ""
 
 #: scubaclub/website/templates/website/create_dive_location.html:11
 msgid "Create Location"
-msgstr ""
-
-#: scubaclub/website/templates/website/dive_clubs.html:9
-msgid "Create a new dive club"
 msgstr ""
 
 #: scubaclub/website/templates/website/dive_clubs.html:11
@@ -1820,23 +1902,24 @@ msgid "Edit Dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/edit_dive.html:11
-#: scubaclub/website/templates/website/edit_dive_club.html:11
 msgid "Save Changes"
-msgstr ""
-
-#: scubaclub/website/templates/website/edit_dive.html:13
-#: scubaclub/website/templates/website/edit_dive_club.html:13
-#: scubaclub/website/templates/website/suggest_location_edit.html:13
-msgid "Cancel"
 msgstr ""
 
 #: scubaclub/website/templates/website/edit_dive_club.html:4
 #: scubaclub/website/templates/website/edit_dive_club.html:7
-msgid "Edit Dive Club"
+msgid "Edit dive club"
+msgstr ""
+
+#: scubaclub/website/templates/website/edit_dive_club.html:11
+msgid "Save changes"
 msgstr ""
 
 #: scubaclub/website/templates/website/event_detail.html:4
-msgid "Dive Details"
+msgid "Dive details"
+msgstr ""
+
+#: scubaclub/website/templates/website/event_detail.html:7
+msgid "Dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/event_detail.html:9
@@ -1845,11 +1928,12 @@ msgstr ""
 
 #: scubaclub/website/templates/website/event_detail.html:11
 #: scubaclub/website/templates/website/location_detail.html:8
-#: scubaclub/website/templates/website/review_location_suggestions.html:21
+#: scubaclub/website/templates/website/review_location_suggestions.html:23
 msgid "Description"
 msgstr ""
 
 #: scubaclub/website/templates/website/event_detail.html:12
+#: scubaclub/website/templates/website/review_location_suggestions.html:11
 msgid "Location"
 msgstr ""
 
@@ -1879,7 +1963,7 @@ msgstr ""
 
 #: scubaclub/website/templates/website/event_detail.html:27
 #: scubaclub/website/templates/website/event_detail.html:32
-msgid "Cancel Dive"
+msgid "Cancel dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/home.html:8
@@ -1947,11 +2031,11 @@ msgid ""
 msgstr ""
 
 #: scubaclub/website/templates/website/home.html:37
-msgid "Get Started"
+msgid "Get started"
 msgstr ""
 
 #: scubaclub/website/templates/website/home.html:38
-msgid "Sign In"
+msgid "Sign in"
 msgstr ""
 
 #: scubaclub/website/templates/website/home.html:42
@@ -1963,11 +2047,15 @@ msgid "Ready for your next diving adventure?"
 msgstr ""
 
 #: scubaclub/website/templates/website/location_detail.html:4
-msgid "Dive Location Details"
+msgid "Dive location details"
+msgstr ""
+
+#: scubaclub/website/templates/website/location_detail.html:7
+msgid "Dive location"
 msgstr ""
 
 #: scubaclub/website/templates/website/location_detail.html:9
-#: scubaclub/website/templates/website/review_location_suggestions.html:24
+#: scubaclub/website/templates/website/review_location_suggestions.html:26
 msgid "Country"
 msgstr ""
 
@@ -1976,15 +2064,15 @@ msgid "Coordinates"
 msgstr ""
 
 #: scubaclub/website/templates/website/location_detail.html:15
-msgid "Suggest Edit"
+msgid "Suggest edit"
 msgstr ""
 
 #: scubaclub/website/templates/website/location_detail.html:19
-msgid "Pending Suggestions"
+msgid "Pending suggestions"
 msgstr ""
 
-#: scubaclub/website/templates/website/location_detail.html:27
-msgid "Back to Locations"
+#: scubaclub/website/templates/website/location_detail.html:28
+msgid "Back to locations"
 msgstr ""
 
 #: scubaclub/website/templates/website/privacy.html:4
@@ -2014,71 +2102,84 @@ msgid ""
 msgstr ""
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:4
-msgid "Review Location Suggestions"
+msgid "Review location suggestions"
 msgstr ""
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:7
-msgid "Pending Location Edit Suggestions"
+msgid "Pending location edit suggestions"
 msgstr ""
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:12
+msgid "Language"
+msgstr ""
+
+#: scubaclub/website/templates/website/review_location_suggestions.html:13
+msgid "Suggested by"
+msgstr ""
+
+#: scubaclub/website/templates/website/review_location_suggestions.html:14
 msgid "Submitted on"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:15
-msgid "Proposed Changes"
+#: scubaclub/website/templates/website/review_location_suggestions.html:17
+msgid "Proposed changes"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:18
+#: scubaclub/website/templates/website/review_location_suggestions.html:20
 msgid "Name"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:18
-#: scubaclub/website/templates/website/review_location_suggestions.html:21
-#: scubaclub/website/templates/website/review_location_suggestions.html:24
-#: scubaclub/website/templates/website/review_location_suggestions.html:27
-#: scubaclub/website/templates/website/review_location_suggestions.html:30
+#: scubaclub/website/templates/website/review_location_suggestions.html:20
+#: scubaclub/website/templates/website/review_location_suggestions.html:23
+#: scubaclub/website/templates/website/review_location_suggestions.html:26
+#: scubaclub/website/templates/website/review_location_suggestions.html:29
+#: scubaclub/website/templates/website/review_location_suggestions.html:32
 msgid "Original"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:18
-#: scubaclub/website/templates/website/review_location_suggestions.html:21
-#: scubaclub/website/templates/website/review_location_suggestions.html:24
-#: scubaclub/website/templates/website/review_location_suggestions.html:27
-#: scubaclub/website/templates/website/review_location_suggestions.html:30
+#: scubaclub/website/templates/website/review_location_suggestions.html:20
+#: scubaclub/website/templates/website/review_location_suggestions.html:23
+#: scubaclub/website/templates/website/review_location_suggestions.html:26
+#: scubaclub/website/templates/website/review_location_suggestions.html:29
+#: scubaclub/website/templates/website/review_location_suggestions.html:32
 msgid "Suggested"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:27
+#: scubaclub/website/templates/website/review_location_suggestions.html:29
 msgid "Latitude"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:30
+#: scubaclub/website/templates/website/review_location_suggestions.html:32
 msgid "Longitude"
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:33
+#: scubaclub/website/templates/website/review_location_suggestions.html:35
 msgid "No specific changes suggested (all fields blank)."
 msgstr ""
 
-#: scubaclub/website/templates/website/review_location_suggestions.html:41
+#: scubaclub/website/templates/website/review_location_suggestions.html:43
 msgid "No pending suggestions."
 msgstr ""
 
 #: scubaclub/website/templates/website/suggest_location_edit.html:4
-msgid "Suggest Edit for Dive Location"
+msgid "Suggest edit for dive location"
 msgstr ""
 
 #: scubaclub/website/templates/website/suggest_location_edit.html:7
-msgid "Suggest Edit for"
+msgid "Suggest edit for"
 msgstr ""
 
 #: scubaclub/website/templates/website/suggest_location_edit.html:11
-msgid "Submit Suggestion"
+msgid "Submit suggestion"
+msgstr ""
+
+#: scubaclub/website/templates/website/upcoming_dives.html:4
+#: scubaclub/website/templates/website/upcoming_dives.html:7
+msgid "Upcoming Dives"
 msgstr ""
 
 #: scubaclub/website/templates/website/upcoming_dives.html:10
-msgid "Create Open Dive"
+msgid "Create a new dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/upcoming_dives.html:12
@@ -2139,4 +2240,10 @@ msgstr ""
 
 #: scubaclub/website/urls.py:44
 msgid "create_dive_event/<int:club_id>/"
+msgstr ""
+
+#: scubaclub/website/views.py:504
+msgid ""
+"An error occurred while saving the location.\n"
+"                                 Please try again."
 msgstr ""
