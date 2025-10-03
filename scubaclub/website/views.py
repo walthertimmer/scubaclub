@@ -53,7 +53,7 @@ def health(request):
 
 def register(request):
     """
-    Handle user registration with email verification.\
+    Handle user registration with email verification.
     """
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
@@ -128,7 +128,8 @@ def dive_clubs(request):
             club.description = club.get_description_for_language(current_lang)
             clubs_with_slugs.append(club)
         else:
-            logger.warning("Club ID %d has no slug for language %s", club.id, current_lang)
+            logger.warning("Club ID %d has no slug for language %s",
+                           club.id, current_lang)
     return render(request, "website/dive_clubs.html", {"clubs": clubs_with_slugs})
 
 
@@ -170,7 +171,8 @@ def club_detail(request, club_slug):
     current_lang = get_language()
     try:
         translation = DiveClubTranslation.objects.get(
-            slug=club_slug, language__code=current_lang)
+            slug=club_slug, language__code=current_lang
+        )
         club = translation.dive_club
     except DiveClubTranslation.DoesNotExist:
         # Instead of raising Http404, redirect to the club overview page
@@ -401,7 +403,8 @@ def create_dive_event(request, club_id=None):
     if club_id:
         club = get_object_or_404(DiveClub, pk=club_id)
         # Check if user is a member or admin of the club
-        if request.user not in club.members.all() and request.user not in club.admins.all():
+        if request.user not in club.members.all() \
+            and request.user not in club.admins.all():
             return HttpResponseForbidden(
                 "You are not a member or admin of this club.")
         initial['club'] = club  # Pre-select the club
@@ -414,12 +417,14 @@ def create_dive_event(request, club_id=None):
             selected_club = form.cleaned_data.get('club')
             if selected_club:
                 # Check if user is a member or admin of the selected club
-                if request.user not in selected_club.members.all() and request.user not in selected_club.admins.all():
+                if request.user not in selected_club.members.all() \
+                    and request.user not in selected_club.admins.all():
                     form.add_error(
                         'club',
                         "You must be a member or admin of the selected club to create a club dive."
                     )
-                    return render(request, 'website/create_dive.html', {'form': form})
+                    return render(request, 'website/create_dive.html', {
+                        'form': form})
                 dive.club = selected_club
                 dive.language = selected_club.language  # Inherit club's language
                 redirect_url = 'website:club_detail'  # Redirect to club page
@@ -656,7 +661,8 @@ def location_detail(request, location_slug):
             translations__slug=location_slug
         )
     except Http404:
-        # If location doesn't exist in current language, redirect to locations overview
+        # If location doesn't exist in current language,
+        # redirect to locations overview
         return redirect('website:dive_locations')
 
     # Set translated fields for template
