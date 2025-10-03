@@ -1,16 +1,16 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Confirm Cancellation" %}{% endblock %}
+{% block title %}{% trans "Confirm cancellation" %}{% endblock %}
 
 {% block content %}
 <h2>{% trans "Confirm cancellation" %}</h2>
-<p>{% trans "Are you sure you want to cancel the dive" %} "{{ event.title }}"?</p>
+<p>{% trans "Are you sure you want to cancel the dive" %} "{{ dive.title }}"?</p>
 <p>{% trans "This action cannot be undone." %}</p>
 
 <form method="post">
   {% csrf_token %}
   <button type="submit" class="cta-button" style="background: red;">{% trans "Yes, cancel dive" %}</button>
-  <a href="{% url 'website:event_detail' event.id %}" class="cta-button">{% trans "No, go back" %}</a>
+  <a href="{% url 'website:dive_detail' dive.id %}" class="cta-button">{% trans "No, go back" %}</a>
 </form>
 {% endblock %}

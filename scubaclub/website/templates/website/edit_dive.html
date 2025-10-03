@@ -1,14 +1,14 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Edit Dive" %}{% endblock %}
+{% block title %}{% trans "Edit dive" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Edit Dive" %}</h2>
+<h2>{% trans "Edit dive" %}</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="cta-button">{% trans "Save Changes" %}</button>
+    <button type="submit" class="cta-button">{% trans "Save changes" %}</button>
 </form>
-<a href="{% url 'website:event_detail' event.id %}">{% trans "Cancel" %}</a>
+<a href="{% url 'website:dive_detail' dive.id %}">{% trans "Cancel" %}</a>
 {% endblock %}

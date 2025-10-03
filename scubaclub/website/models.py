@@ -343,12 +343,18 @@ class DiveEvent(models.Model):
     dive_location = models.ForeignKey(DiveLocation, on_delete=models.CASCADE)
     date = models.DateTimeField()
     max_participants = models.PositiveIntegerField(default=30)
-    language = models.ForeignKey(Language, on_delete=models.SET_DEFAULT, default=1)
-    organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_dives')
-    participants = models.ManyToManyField(User, related_name='dive_events', blank=True)
+    language = models.ForeignKey(
+        Language, on_delete=models.SET_DEFAULT, default=1)
+    organizer = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='organized_dives')
+    participants = models.ManyToManyField(
+        User, related_name='dives', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    club = models.ForeignKey(DiveClub, on_delete=models.SET_NULL, null=True, blank=True, related_name='events')
-    is_cancelled = models.BooleanField(default=False, help_text="Mark if the dive has been cancelled.")
+    club = models.ForeignKey(
+        DiveClub, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='dives')
+    is_cancelled = models.BooleanField(
+        default=False, help_text="Mark if the dive has been cancelled.")
 
     class Meta:
         ordering = ['date']

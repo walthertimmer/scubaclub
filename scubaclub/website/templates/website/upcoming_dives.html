@@ -1,10 +1,10 @@
 {% extends "website/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Upcoming Dives" %}{% endblock %}
+{% block title %}{% trans "Upcoming dives" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "Upcoming Dives" %}</h2>
+<h2>{% trans "Upcoming dives" %}</h2>
 
 {% if user.is_authenticated %}
     <a href="{% url 'website:create_dive_event' %}">{% trans "Create a new dive" %}</a>
@@ -15,11 +15,11 @@
 <ul>
     {% for dive in dives %}
     <li>
-        <a href="{% url 'website:event_detail' event_id=dive.id %}">{{ dive.title }}</a> - {{ dive.date|date:"F j, Y" }} at {{ dive.dive_location.name }}
+        <a href="{% url 'website:dive_detail' dive_id=dive.id %}">{{ dive.title }}</a> - {{ dive.date|date:"F j, Y" }} at <a href="{% url 'website:location_detail' location_slug=dive.dive_location.slug %}">{{ dive.dive_location.name }}</a>
         {% if dive.club %}
             (Club: <a href="{% url 'website:club_detail' club_slug=dive.club_slug %}">{{ dive.club_name }}</a>)
         {% else %}
-            (Open dive)
+            ({% trans "Open dive" %})
         {% endif %}
     </li>
     {% empty %}

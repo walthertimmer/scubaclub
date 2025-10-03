@@ -140,6 +140,11 @@ def upcoming_dives(request):
         if dive.club:
             dive.club_slug = dive.club.get_slug_for_language(current_lang)
             dive.club_name = dive.club.get_name_for_language(current_lang)
+        if dive.dive_location:
+            dive.dive_location.name = dive.dive_location \
+                .get_name_for_language(current_lang)
+            dive.dive_location.slug = dive.dive_location \
+                .get_slug_for_language(current_lang)
     return render(request, "website/upcoming_dives.html", {"dives": dives})
 
 
@@ -358,8 +363,10 @@ def create_dive_club(request):
                 return redirect('website:club_detail', club_slug=club_slug)
             else:
                 # Fallback if no slug (shouldn't happen with required names)
-                logger.warning("No slug found for newly created club ID %s in language %s",
-                               club.id, current_lang)
+                logger.warning(
+                    "No slug found for newly created club ID %s in language %s",
+                    club.id, current_lang
+                )
                 return redirect('website:dive_clubs')
     else:
         form = DiveClubForm()
@@ -383,7 +390,8 @@ def create_dive(request, club_id):
             return redirect('website:club_detail', club_slug=club.slug)
     else:
         form = DiveEventForm()
-    return render(request, 'website/create_dive.html', {'form': form, 'club': club})
+    return render(request, 'website/create_dive.html',
+                  {'form': form, 'club': club})
 
 
 @login_required
@@ -394,7 +402,8 @@ def create_dive_event(request, club_id=None):
         club = get_object_or_404(DiveClub, pk=club_id)
         # Check if user is a member or admin of the club
         if request.user not in club.members.all() and request.user not in club.admins.all():
-            return HttpResponseForbidden("You are not a member or admin of this club.")
+            return HttpResponseForbidden(
+                "You are not a member or admin of this club.")
         initial['club'] = club  # Pre-select the club
 
     if request.method == 'POST':
@@ -406,7 +415,10 @@ def create_dive_event(request, club_id=None):
             if selected_club:
                 # Check if user is a member or admin of the selected club
                 if request.user not in selected_club.members.all() and request.user not in selected_club.admins.all():
-                    form.add_error('club', "You must be a member or admin of the selected club to create a club dive.")
+                    form.add_error(
+                        'club',
+                        "You must be a member or admin of the selected club to create a club dive."
+                    )
                     return render(request, 'website/create_dive.html', {'form': form})
                 dive.club = selected_club
                 dive.language = selected_club.language  # Inherit club's language
@@ -426,63 +438,79 @@ def create_dive_event(request, club_id=None):
 
 
 @login_required
-def edit_dive(request, event_id):
+def edit_dive(request, dive_id):
     """Edit an existing dive event, with permission checks."""
-    event = get_object_or_404(DiveEvent, pk=event_id)
+    dive = get_object_or_404(DiveEvent, pk=dive_id)
 
     # Permission check
-    if event.club:
+    if dive.club:
         # Club dive: Only club admins can edit
-        if request.user not in event.club.admins.all():
-            return HttpResponseForbidden("You do not have permission to edit this dive.")
+        if request.user not in dive.club.admins.all():
+            return HttpResponseForbidden(
+                "You do not have permission to edit this dive.")
     else:
         # Open dive: Only the organizer can edit
-        if request.user != event.organizer:
-            return HttpResponseForbidden("You do not have permission to edit this dive.")
+        if request.user != dive.organizer:
+            return HttpResponseForbidden(
+                "You do not have permission to edit this dive.")
 
     if request.method == 'POST':
-        form = DiveEventForm(request.POST, instance=event)
+        form = DiveEventForm(request.POST, instance=dive)
         if form.is_valid():
             form.save()
-            return redirect('website:event_detail', event_id=event.id)
+            return redirect('website:dive_detail', dive_id=dive.id)
     else:
-        form = DiveEventForm(instance=event)
+        form = DiveEventForm(instance=dive)
 
-    return render(request, 'website/edit_dive.html', {'form': form, 'event': event})
+    return render(request, 'website/edit_dive.html',
+                  {'form': form, 'dive': dive})
 
 
 @login_required
-def cancel_dive(request, event_id):
+def cancel_dive(request, dive_id):
     """Cancel a dive event, with permission checks."""
-    event = get_object_or_404(DiveEvent, pk=event_id)
+    dive = get_object_or_404(DiveEvent, pk=dive_id)
 
     # Permission check
-    if event.club:
+    if dive.club:
         # Club dive: Only club admins can cancel
-        if request.user not in event.club.admins.all():
-            return HttpResponseForbidden("You do not have permission to cancel this dive.")
+        if request.user not in dive.club.admins.all():
+            return HttpResponseForbidden(
+                "You do not have permission to cancel this dive.")
     else:
         # Open dive: Only the organizer can cancel
-        if request.user != event.organizer:
-            return HttpResponseForbidden("You do not have permission to cancel this dive.")
+        if request.user != dive.organizer:
+            return HttpResponseForbidden(
+                "You do not have permission to cancel this dive.")
 
     if request.method == 'POST':
-        event.is_cancelled = True
-        event.save()
+        dive.is_cancelled = True
+        dive.save()
         # Optional: Add email notifications to participants here
-        return redirect('website:event_detail', event_id=event.id)
+        return redirect('website:dive_detail', dive_id=dive.id)
 
     return render(request, 'website/confirm_dive_cancel.html', {
-        'event': event
+        'dive': dive
     })
 
 
 @login_required
-def event_detail(request, event_id):
+def dive_detail(request, dive_id):
     """Render the detail page for a specific dive event."""
-    event = get_object_or_404(DiveEvent, pk=event_id)
-    return render(request, 'website/event_detail.html', {
-        'event': event
+    dive = get_object_or_404(DiveEvent, pk=dive_id)
+
+    # Get location translation if it exists
+    location = None
+    if dive.dive_location:
+        current_lang = get_language()
+        location = dive.dive_location
+        location.name = location.get_name_for_language(current_lang)
+        location.description = location.get_description_for_language(current_lang)
+        location.slug = location.get_slug_for_language(current_lang)
+
+    return render(request, 'website/dive_detail.html', {
+        'dive': dive,
+        'location': location
     })
 
 
