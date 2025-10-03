@@ -1,5 +1,5 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Dutch translations.
+# Copyright (C) 2025 ScubaClub.org
 # This file is distributed under the same license as the PACKAGE package.
 # W.D. TIMMER <EMAIL@ADDRESS>, 2025.
 #
@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-01 23:51+0200\n"
+"POT-Creation-Date: 2025-10-04 00:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: W.D. TIMMER <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1548,7 +1548,6 @@ msgstr ""
 #: scubaclub/website/templates/registration/login.html:4
 #: scubaclub/website/templates/registration/login.html:7
 #: scubaclub/website/templates/registration/login.html:11
-#: scubaclub/website/templates/website/base.html:26
 msgid "Login"
 msgstr "Inloggen"
 
@@ -1600,37 +1599,45 @@ msgid "Register again"
 msgstr "Registreer opnieuw"
 
 #: scubaclub/website/templates/website/base.html:20
-msgid "Welcome,"
+#, fuzzy
+#| msgid "Welcome,"
+msgid "welcome,"
 msgstr "Welkom,"
 
 #: scubaclub/website/templates/website/base.html:23
-msgid "Logout"
+#, fuzzy
+#| msgid "Logout"
+msgid "logout"
 msgstr "Uitloggen"
 
+#: scubaclub/website/templates/website/base.html:26
+#, fuzzy
+#| msgid "Login"
+msgid "login"
+msgstr "Inloggen"
+
 #: scubaclub/website/templates/website/base.html:27
-#: scubaclub/website/templates/website/register.html:5
-#: scubaclub/website/templates/website/register.html:12
-msgid "Register"
-msgstr "Registreer"
+#, fuzzy
+#| msgid "Register"
+msgid "register"
+msgstr "registreer/"
 
 #: scubaclub/website/templates/website/base.html:29
-#: scubaclub/website/templates/website/dive_clubs.html:4
-#: scubaclub/website/templates/website/dive_clubs.html:7
 #, fuzzy
 #| msgid "Dive Clubs"
-msgid "Dive clubs"
+msgid "dive clubs"
 msgstr "Duikclubs"
 
 #: scubaclub/website/templates/website/base.html:30
 #, fuzzy
 #| msgid "Upcoming Dives"
-msgid "Upcoming dives"
+msgid "upcoming dives"
 msgstr "Toekomstige duiken"
 
 #: scubaclub/website/templates/website/base.html:31
-#: scubaclub/website/templates/website/dive_locations.html:4
-#: scubaclub/website/templates/website/dive_locations.html:7
-msgid "Dive Locations"
+#, fuzzy
+#| msgid "Dive Locations"
+msgid "dive locations"
 msgstr "Duiklocaties"
 
 #: scubaclub/website/templates/website/base.html:52
@@ -1663,7 +1670,7 @@ msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:13
 msgid "Contact Information"
-msgstr ""
+msgstr "Contactinformatie"
 
 #: scubaclub/website/templates/website/club_detail.html:15
 msgid "Address:"
@@ -1675,15 +1682,15 @@ msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:21
 msgid "Postal code:"
-msgstr ""
+msgstr "PostcodeL"
 
 #: scubaclub/website/templates/website/club_detail.html:24
 msgid "Country:"
-msgstr ""
+msgstr "Land:"
 
 #: scubaclub/website/templates/website/club_detail.html:27
 msgid "Telephone:"
-msgstr ""
+msgstr "Telefoon:"
 
 #: scubaclub/website/templates/website/club_detail.html:30
 msgid "Website:"
@@ -1725,12 +1732,12 @@ msgstr ""
 #: scubaclub/website/templates/website/club_detail.html:77
 #: scubaclub/website/templates/website/review_location_suggestions.html:39
 msgid "Approve"
-msgstr ""
+msgstr "Goedkeuren"
 
 #: scubaclub/website/templates/website/club_detail.html:81
 #: scubaclub/website/templates/website/review_location_suggestions.html:40
 msgid "Reject"
-msgstr ""
+msgstr "Afwijzen"
 
 #: scubaclub/website/templates/website/club_detail.html:87
 msgid "No pending members."
@@ -1739,20 +1746,20 @@ msgstr ""
 #: scubaclub/website/templates/website/club_detail.html:90
 #: scubaclub/website/templates/website/club_detail.html:112
 msgid "Members"
-msgstr ""
+msgstr "Leden"
 
 #: scubaclub/website/templates/website/club_detail.html:98
 msgid "Promote to admin"
-msgstr ""
+msgstr "Promoveer tot admin"
 
 #: scubaclub/website/templates/website/club_detail.html:103
 msgid "Remove"
-msgstr ""
+msgstr "Verwijderen"
 
 #: scubaclub/website/templates/website/club_detail.html:109
 #: scubaclub/website/templates/website/club_detail.html:120
 msgid "No members yet."
-msgstr ""
+msgstr "Nog geen leden."
 
 #: scubaclub/website/templates/website/club_detail.html:124
 #, fuzzy
@@ -1805,23 +1812,20 @@ msgstr ""
 
 #: scubaclub/website/templates/website/club_detail.html:158
 msgid "Back to overview of clubs"
-msgstr ""
+msgstr "Terug naar het overzicht van clubs"
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:4
-msgid "Confirm Cancellation"
-msgstr ""
-
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:7
 msgid "Confirm cancellation"
-msgstr ""
+msgstr "Bevestig annulatie"
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:8
 msgid "Are you sure you want to cancel the dive"
-msgstr ""
+msgstr "Weet je zeker dat je duik wilt annuleren"
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:9
 msgid "This action cannot be undone."
-msgstr ""
+msgstr "Deze actie is permanent"
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:13
 #, fuzzy
@@ -1912,6 +1916,13 @@ msgstr "Duiklocaties"
 msgid "Create Location"
 msgstr "Duiklocaties"
 
+#: scubaclub/website/templates/website/dive_clubs.html:4
+#: scubaclub/website/templates/website/dive_clubs.html:7
+#, fuzzy
+#| msgid "Dive Clubs"
+msgid "Dive clubs"
+msgstr "Duikclubs"
+
 #: scubaclub/website/templates/website/dive_clubs.html:11
 msgid "Please log in to create your own dive club."
 msgstr ""
@@ -1919,6 +1930,85 @@ msgstr ""
 #: scubaclub/website/templates/website/dive_clubs.html:17
 msgid "No dive clubs available."
 msgstr "Geen duikclubs beschikbaar."
+
+#: scubaclub/website/templates/website/dive_detail.html:4
+#, fuzzy
+#| msgid "Dive Clubs"
+msgid "Dive details"
+msgstr "Duikclubs"
+
+#: scubaclub/website/templates/website/dive_detail.html:7
+#, fuzzy
+#| msgid "Upcoming Dives"
+msgid "Dive"
+msgstr "Toekomstige duiken"
+
+#: scubaclub/website/templates/website/dive_detail.html:9
+msgid "This dive has been cancelled."
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:11
+#: scubaclub/website/templates/website/location_detail.html:8
+#: scubaclub/website/templates/website/review_location_suggestions.html:23
+msgid "Description"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:12
+#: scubaclub/website/templates/website/review_location_suggestions.html:11
+#, fuzzy
+#| msgid "Dive Locations"
+msgid "Location"
+msgstr "Duiklocaties"
+
+#: scubaclub/website/templates/website/dive_detail.html:13
+msgid "Date"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:14
+msgid "Max Participants"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:15
+#, fuzzy
+#| msgid "Organize Dives"
+msgid "Organizer"
+msgstr "Organiseer duiken"
+
+#: scubaclub/website/templates/website/dive_detail.html:17
+msgid "Club"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:19
+msgid "Type"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:19
+#: scubaclub/website/templates/website/upcoming_dives.html:22
+#, fuzzy
+#| msgid "Upcoming Dives"
+msgid "Open dive"
+msgstr "Toekomstige duiken"
+
+#: scubaclub/website/templates/website/dive_detail.html:26
+#: scubaclub/website/templates/website/dive_detail.html:31
+#: scubaclub/website/templates/website/edit_dive.html:4
+#: scubaclub/website/templates/website/edit_dive.html:7
+#, fuzzy
+#| msgid "Dive Clubs"
+msgid "Edit dive"
+msgstr "Duikclubs"
+
+#: scubaclub/website/templates/website/dive_detail.html:27
+#: scubaclub/website/templates/website/dive_detail.html:32
+#, fuzzy
+#| msgid "Organize Dives"
+msgid "Cancel dive"
+msgstr "Organiseer duiken"
+
+#: scubaclub/website/templates/website/dive_locations.html:4
+#: scubaclub/website/templates/website/dive_locations.html:7
+msgid "Dive Locations"
+msgstr "Duiklocaties"
 
 #: scubaclub/website/templates/website/dive_locations.html:10
 msgid "Create a new dive location"
@@ -1936,15 +2026,9 @@ msgstr "Geen duiklocaties beschikbaar."
 msgid "Review Edit Suggestions"
 msgstr ""
 
-#: scubaclub/website/templates/website/edit_dive.html:4
-#: scubaclub/website/templates/website/edit_dive.html:7
-#: scubaclub/website/templates/website/event_detail.html:26
-#: scubaclub/website/templates/website/event_detail.html:31
-msgid "Edit Dive"
-msgstr ""
-
 #: scubaclub/website/templates/website/edit_dive.html:11
-msgid "Save Changes"
+#: scubaclub/website/templates/website/edit_dive_club.html:11
+msgid "Save changes"
 msgstr ""
 
 #: scubaclub/website/templates/website/edit_dive_club.html:4
@@ -1953,74 +2037,6 @@ msgstr ""
 #| msgid "Dive Clubs"
 msgid "Edit dive club"
 msgstr "Duikclubs"
-
-#: scubaclub/website/templates/website/edit_dive_club.html:11
-msgid "Save changes"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:4
-#, fuzzy
-#| msgid "Dive Clubs"
-msgid "Dive details"
-msgstr "Duikclubs"
-
-#: scubaclub/website/templates/website/event_detail.html:7
-#, fuzzy
-#| msgid "Upcoming Dives"
-msgid "Dive"
-msgstr "Toekomstige duiken"
-
-#: scubaclub/website/templates/website/event_detail.html:9
-msgid "This dive has been cancelled."
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:11
-#: scubaclub/website/templates/website/location_detail.html:8
-#: scubaclub/website/templates/website/review_location_suggestions.html:23
-msgid "Description"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:12
-#: scubaclub/website/templates/website/review_location_suggestions.html:11
-#, fuzzy
-#| msgid "Dive Locations"
-msgid "Location"
-msgstr "Duiklocaties"
-
-#: scubaclub/website/templates/website/event_detail.html:13
-msgid "Date"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:14
-msgid "Max Participants"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:15
-#, fuzzy
-#| msgid "Organize Dives"
-msgid "Organizer"
-msgstr "Organiseer duiken"
-
-#: scubaclub/website/templates/website/event_detail.html:17
-msgid "Club"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:19
-msgid "Type"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:19
-#, fuzzy
-#| msgid "Upcoming Dives"
-msgid "Open Dive"
-msgstr "Toekomstige duiken"
-
-#: scubaclub/website/templates/website/event_detail.html:27
-#: scubaclub/website/templates/website/event_detail.html:32
-#, fuzzy
-#| msgid "Organize Dives"
-msgid "Cancel dive"
-msgstr "Organiseer duiken"
 
 #: scubaclub/website/templates/website/home.html:8
 msgid "Welcome to ScubaClub"
@@ -2169,6 +2185,11 @@ msgid ""
 "data. Our email server is located in France."
 msgstr ""
 
+#: scubaclub/website/templates/website/register.html:5
+#: scubaclub/website/templates/website/register.html:12
+msgid "Register"
+msgstr "Registreer"
+
 #: scubaclub/website/templates/website/review_location_suggestions.html:4
 #, fuzzy
 #| msgid "Dive Locations"
@@ -2177,7 +2198,7 @@ msgstr "Duiklocaties"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:7
 msgid "Pending location edit suggestions"
-msgstr ""
+msgstr "Openstaande locatie wijzigingen"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:12
 #, fuzzy
@@ -2187,19 +2208,19 @@ msgstr "Wijzig taal"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:13
 msgid "Suggested by"
-msgstr ""
+msgstr "Gesuggereerd door"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:14
 msgid "Submitted on"
-msgstr ""
+msgstr "Verzonden op"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:17
 msgid "Proposed changes"
-msgstr ""
+msgstr "Voorgestelde wijzigingen"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:20
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:20
 #: scubaclub/website/templates/website/review_location_suggestions.html:23
@@ -2207,7 +2228,7 @@ msgstr ""
 #: scubaclub/website/templates/website/review_location_suggestions.html:29
 #: scubaclub/website/templates/website/review_location_suggestions.html:32
 msgid "Original"
-msgstr ""
+msgstr "Origineel"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:20
 #: scubaclub/website/templates/website/review_location_suggestions.html:23
@@ -2215,7 +2236,7 @@ msgstr ""
 #: scubaclub/website/templates/website/review_location_suggestions.html:29
 #: scubaclub/website/templates/website/review_location_suggestions.html:32
 msgid "Suggested"
-msgstr ""
+msgstr "Gesuggereerd"
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:29
 msgid "Latitude"
@@ -2227,11 +2248,11 @@ msgstr ""
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:35
 msgid "No specific changes suggested (all fields blank)."
-msgstr ""
+msgstr "Geen specifieke wijzigingen gesuggereerd (alle velden zijn blank)."
 
 #: scubaclub/website/templates/website/review_location_suggestions.html:43
 msgid "No pending suggestions."
-msgstr ""
+msgstr "Geen openstaande suggesties."
 
 #: scubaclub/website/templates/website/suggest_location_edit.html:4
 #, fuzzy
@@ -2241,15 +2262,17 @@ msgstr "Duiklocaties"
 
 #: scubaclub/website/templates/website/suggest_location_edit.html:7
 msgid "Suggest edit for"
-msgstr ""
+msgstr "Suggereer wijziging voor"
 
 #: scubaclub/website/templates/website/suggest_location_edit.html:11
 msgid "Submit suggestion"
-msgstr ""
+msgstr "Verzend suggestie"
 
 #: scubaclub/website/templates/website/upcoming_dives.html:4
 #: scubaclub/website/templates/website/upcoming_dives.html:7
-msgid "Upcoming Dives"
+#, fuzzy
+#| msgid "Upcoming Dives"
+msgid "Upcoming dives"
 msgstr "Toekomstige duiken"
 
 #: scubaclub/website/templates/website/upcoming_dives.html:10
@@ -2260,11 +2283,11 @@ msgstr "Duikclubs"
 
 #: scubaclub/website/templates/website/upcoming_dives.html:12
 msgid "Please log in to organize your own dives."
-msgstr ""
+msgstr "Log in om je eigen duiken te organiseren."
 
 #: scubaclub/website/templates/website/upcoming_dives.html:26
 msgid "No upcoming dives."
-msgstr ""
+msgstr "Geen toekomstige duiken."
 
 #: scubaclub/website/urls.py:13
 msgid "privacy/"
@@ -2288,11 +2311,11 @@ msgstr ""
 #, fuzzy
 #| msgid "Login"
 msgid "login/"
-msgstr "Inloggen"
+msgstr "inloggen/"
 
 #: scubaclub/website/urls.py:19
 msgid "logout/"
-msgstr ""
+msgstr "uitloggen/"
 
 #: scubaclub/website/urls.py:20
 msgid "registration_complete/"
@@ -2314,19 +2337,22 @@ msgstr "duiklocaties/"
 msgid "club/<slug:club_slug>/"
 msgstr ""
 
-#: scubaclub/website/urls.py:43
-msgid "create_dive_event/"
-msgstr ""
-
 #: scubaclub/website/urls.py:44
+msgid "create_dive_event/"
+msgstr "organiseer_duik/"
+
+#: scubaclub/website/urls.py:46
 msgid "create_dive_event/<int:club_id>/"
 msgstr ""
 
-#: scubaclub/website/views.py:504
+#: scubaclub/website/views.py:532
 msgid ""
 "An error occurred while saving the location.\n"
 "                                 Please try again."
-msgstr ""
+msgstr "Er was een probleem tijdens het opslaan van de locatie. Probeer het opnieuw."
+
+#~ msgid "Upcoming Dives"
+#~ msgstr "Toekomstige duiken"
 
 #, fuzzy
 #~| msgid "Dive Clubs"

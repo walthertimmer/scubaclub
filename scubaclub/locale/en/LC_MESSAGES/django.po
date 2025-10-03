@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-01 23:51+0200\n"
+"POT-Creation-Date: 2025-10-04 00:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1544,7 +1544,6 @@ msgstr ""
 #: scubaclub/website/templates/registration/login.html:4
 #: scubaclub/website/templates/registration/login.html:7
 #: scubaclub/website/templates/registration/login.html:11
-#: scubaclub/website/templates/website/base.html:26
 msgid "Login"
 msgstr ""
 
@@ -1594,33 +1593,31 @@ msgid "Register again"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:20
-msgid "Welcome,"
+msgid "welcome,"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:23
-msgid "Logout"
+msgid "logout"
+msgstr ""
+
+#: scubaclub/website/templates/website/base.html:26
+msgid "login"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:27
-#: scubaclub/website/templates/website/register.html:5
-#: scubaclub/website/templates/website/register.html:12
-msgid "Register"
+msgid "register"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:29
-#: scubaclub/website/templates/website/dive_clubs.html:4
-#: scubaclub/website/templates/website/dive_clubs.html:7
-msgid "Dive clubs"
+msgid "dive clubs"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:30
-msgid "Upcoming dives"
+msgid "upcoming dives"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:31
-#: scubaclub/website/templates/website/dive_locations.html:4
-#: scubaclub/website/templates/website/dive_locations.html:7
-msgid "Dive Locations"
+msgid "dive locations"
 msgstr ""
 
 #: scubaclub/website/templates/website/base.html:52
@@ -1782,9 +1779,6 @@ msgid "Back to overview of clubs"
 msgstr ""
 
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:4
-msgid "Confirm Cancellation"
-msgstr ""
-
 #: scubaclub/website/templates/website/confirm_dive_cancel.html:7
 msgid "Confirm cancellation"
 msgstr ""
@@ -1870,12 +1864,82 @@ msgstr ""
 msgid "Create Location"
 msgstr ""
 
+#: scubaclub/website/templates/website/dive_clubs.html:4
+#: scubaclub/website/templates/website/dive_clubs.html:7
+msgid "Dive clubs"
+msgstr ""
+
 #: scubaclub/website/templates/website/dive_clubs.html:11
 msgid "Please log in to create your own dive club."
 msgstr ""
 
 #: scubaclub/website/templates/website/dive_clubs.html:17
 msgid "No dive clubs available."
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:4
+msgid "Dive details"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:7
+msgid "Dive"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:9
+msgid "This dive has been cancelled."
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:11
+#: scubaclub/website/templates/website/location_detail.html:8
+#: scubaclub/website/templates/website/review_location_suggestions.html:23
+msgid "Description"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:12
+#: scubaclub/website/templates/website/review_location_suggestions.html:11
+msgid "Location"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:13
+msgid "Date"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:14
+msgid "Max Participants"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:15
+msgid "Organizer"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:17
+msgid "Club"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:19
+msgid "Type"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:19
+#: scubaclub/website/templates/website/upcoming_dives.html:22
+msgid "Open dive"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:26
+#: scubaclub/website/templates/website/dive_detail.html:31
+#: scubaclub/website/templates/website/edit_dive.html:4
+#: scubaclub/website/templates/website/edit_dive.html:7
+msgid "Edit dive"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_detail.html:27
+#: scubaclub/website/templates/website/dive_detail.html:32
+msgid "Cancel dive"
+msgstr ""
+
+#: scubaclub/website/templates/website/dive_locations.html:4
+#: scubaclub/website/templates/website/dive_locations.html:7
+msgid "Dive Locations"
 msgstr ""
 
 #: scubaclub/website/templates/website/dive_locations.html:10
@@ -1894,76 +1958,14 @@ msgstr ""
 msgid "Review Edit Suggestions"
 msgstr ""
 
-#: scubaclub/website/templates/website/edit_dive.html:4
-#: scubaclub/website/templates/website/edit_dive.html:7
-#: scubaclub/website/templates/website/event_detail.html:26
-#: scubaclub/website/templates/website/event_detail.html:31
-msgid "Edit Dive"
-msgstr ""
-
 #: scubaclub/website/templates/website/edit_dive.html:11
-msgid "Save Changes"
+#: scubaclub/website/templates/website/edit_dive_club.html:11
+msgid "Save changes"
 msgstr ""
 
 #: scubaclub/website/templates/website/edit_dive_club.html:4
 #: scubaclub/website/templates/website/edit_dive_club.html:7
 msgid "Edit dive club"
-msgstr ""
-
-#: scubaclub/website/templates/website/edit_dive_club.html:11
-msgid "Save changes"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:4
-msgid "Dive details"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:7
-msgid "Dive"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:9
-msgid "This dive has been cancelled."
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:11
-#: scubaclub/website/templates/website/location_detail.html:8
-#: scubaclub/website/templates/website/review_location_suggestions.html:23
-msgid "Description"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:12
-#: scubaclub/website/templates/website/review_location_suggestions.html:11
-msgid "Location"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:13
-msgid "Date"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:14
-msgid "Max Participants"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:15
-msgid "Organizer"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:17
-msgid "Club"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:19
-msgid "Type"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:19
-msgid "Open Dive"
-msgstr ""
-
-#: scubaclub/website/templates/website/event_detail.html:27
-#: scubaclub/website/templates/website/event_detail.html:32
-msgid "Cancel dive"
 msgstr ""
 
 #: scubaclub/website/templates/website/home.html:8
@@ -2101,6 +2103,11 @@ msgid ""
 "data. Our email server is located in France."
 msgstr ""
 
+#: scubaclub/website/templates/website/register.html:5
+#: scubaclub/website/templates/website/register.html:12
+msgid "Register"
+msgstr ""
+
 #: scubaclub/website/templates/website/review_location_suggestions.html:4
 msgid "Review location suggestions"
 msgstr ""
@@ -2175,7 +2182,7 @@ msgstr ""
 
 #: scubaclub/website/templates/website/upcoming_dives.html:4
 #: scubaclub/website/templates/website/upcoming_dives.html:7
-msgid "Upcoming Dives"
+msgid "Upcoming dives"
 msgstr ""
 
 #: scubaclub/website/templates/website/upcoming_dives.html:10
@@ -2234,15 +2241,15 @@ msgstr ""
 msgid "club/<slug:club_slug>/"
 msgstr ""
 
-#: scubaclub/website/urls.py:43
+#: scubaclub/website/urls.py:44
 msgid "create_dive_event/"
 msgstr ""
 
-#: scubaclub/website/urls.py:44
+#: scubaclub/website/urls.py:46
 msgid "create_dive_event/<int:club_id>/"
 msgstr ""
 
-#: scubaclub/website/views.py:504
+#: scubaclub/website/views.py:532
 msgid ""
 "An error occurred while saving the location.\n"
 "                                 Please try again."

@@ -5,7 +5,7 @@
 <html lang="{{ CURRENT_LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}scubaclub.org{% endblock %} | scubaclub.org</title>
+    <title>{% block title %}ScubaClub.org{% endblock %} | ScubaClub.org</title>
     <link rel="icon" type="image/x-icon" href="{% static 'website/images/favicon.ico' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'website/css/style.css' %}">
 </head>
@@ -13,22 +13,22 @@
     <header>
         <div class="header-content">
             <img src="{% static 'website/images/scubaclub.png' %}" alt="ScubaClub" class="logo">
-            <a href="{% url 'website:home' %}"><h1>scubaclub.org</h1></a>
+            <a href="{% url 'website:home' %}"><h1>ScubaClub.org</h1></a>
         </div>
         <nav>
             {% if user.is_authenticated %}
-                {% trans "Welcome," %} {{ user.username }} |
+                {% trans "welcome," %} {{ user.username }} |
                 <form action="{% url 'website:logout' %}" method="post" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="logout-link">{% trans "Logout" %}</button>
+                    <button type="submit" class="logout-link">{% trans "logout" %}</button>
                 </form>
             {% else %}
-                <a href="{% url 'website:login' %}">{% trans "Login" %}</a> |
-                <a href="{% url 'website:register' %}">{% trans "Register" %}</a>
+                <a href="{% url 'website:login' %}">{% trans "login" %}</a> |
+                <a href="{% url 'website:register' %}">{% trans "register" %}</a>
             {% endif %}
-            | <a href="{% url 'website:dive_clubs' %}">{% trans "Dive clubs" %}</a>
-            | <a href="{% url 'website:upcoming_dives' %}">{% trans "Upcoming dives" %}</a>
-            | <a href="{% url 'website:dive_locations' %}">{% trans "Dive Locations" %}</a>
+            | <a href="{% url 'website:dive_clubs' %}">{% trans "dive clubs" %}</a>
+            | <a href="{% url 'website:upcoming_dives' %}">{% trans "upcoming dives" %}</a>
+            | <a href="{% url 'website:dive_locations' %}">{% trans "dive locations" %}</a>
         </nav>
 
 
@@ -51,7 +51,7 @@
             <input type="hidden" name="next" value="{{ request.get_full_path }}">
             <input type="submit" value="{% trans 'Change language' %}">
         </form>
-        <p>&copy; 2025 scubaclub.org | <a href="{% url 'website:privacy' %}">{% trans "privacy" %}</a> | <a href="{% url 'website:contact' %}">{% trans "contact" %}</a></p>
+        <p>&copy; 2025 ScubaClub.org | <a href="{% url 'website:privacy' %}">{% trans "privacy" %}</a> | <a href="{% url 'website:contact' %}">{% trans "contact" %}</a></p>
     </footer>
 
 </body>

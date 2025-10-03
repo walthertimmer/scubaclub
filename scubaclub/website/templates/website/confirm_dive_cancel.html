@@ -11,6 +11,6 @@
 <form method="post">
   {% csrf_token %}
   <button type="submit" class="cta-button" style="background: red;">{% trans "Yes, cancel dive" %}</button>
-  <a href="{% url 'website:dive_detail' dive.id %}" class="cta-button">{% trans "No, go back" %}</a>
+  <a href="{% url 'website:dive_detail' dive.id %}">{% trans "No, go back" %}</a>
 </form>
 {% endblock %}

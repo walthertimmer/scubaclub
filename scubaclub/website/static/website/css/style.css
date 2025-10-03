@@ -7,10 +7,8 @@ body {
 }
 
 main {
-    /* max-width: 480px; */
     max-width: min(90vw, 800px);
-    /* margin: 48px auto; */
-    margin: 3vw auto;
+    margin: 1vw auto;
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.1);
@@ -19,7 +17,7 @@ main {
 
 header, footer {
     text-align: center;
-    padding: 20px 0;
+    padding: 10px 0;
 }
 
 .header-content {

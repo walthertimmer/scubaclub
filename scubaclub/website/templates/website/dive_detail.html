@@ -5,7 +5,7 @@
 
 {% block content %}
 <h2>{% trans "Dive" %} {{ dive.title }}</h2>
-{% if event.is_cancelled %}
+{% if dive.is_cancelled %}
     <p style="color: red;"><strong>{% trans "This dive has been cancelled." %}</strong></p>
 {% endif %}
 <p><strong>{% trans "Description" %}:</strong> {{ dive.description }}</p>
@@ -20,7 +20,7 @@
 {% endif %}
 
 <!-- Add edit and cancel buttons if user has permission and not cancelled -->
-{% if user.is_authenticated and not event.is_cancelled %}
+{% if user.is_authenticated and not dive.is_cancelled %}
   {% if dive.club %}
     {% if user in dive.club.admins.all %}
       <a href="{% url 'website:edit_dive' dive.id %}" class="cta-button">{% trans "Edit dive" %}</a>
