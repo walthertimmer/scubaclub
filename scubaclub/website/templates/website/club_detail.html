@@ -121,18 +121,18 @@
   {% endif %}
 {% endif %}
 
-<h3>{% trans "Upcoming Events" %}</h3>
+<h3>{% trans "Upcoming dives" %}</h3>
 {% if user in members or user in admins %}
   <a href="{% url 'website:create_dive_event_with_club' club.id %}" class="cta-button">{% trans "Create dive" %}</a>
 {% endif %}
 {% if club_events %}
   <ul>
     {% for event in club_events %}
-      <li><a href="{% url 'website:event_detail' event.id %}">{{ event.title }}</a> - {{ event.date|date:"F j, Y" }}</li>
+      <li><a href="{% url 'website:dive_detail' event.id %}">{{ event.title }}</a> - {{ event.date|date:"F j, Y" }}</li>
     {% endfor %}
   </ul>
 {% else %}
-  <p>{% trans "No upcoming events." %}</p>
+  <p>{% trans "No upcoming dives." %}</p>
 {% endif %}
 
 <h3>{% trans "Dive locations" %}</h3>

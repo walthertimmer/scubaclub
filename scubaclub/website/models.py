@@ -52,12 +52,17 @@ class Country(models.Model):
 
 class CountryTranslation(models.Model):
     """Translatable fields for Country."""
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='translations')
-    language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, help_text="Translated name of the country")
+    country = models.ForeignKey(Country,
+                                on_delete=models.CASCADE,
+                                related_name='translations')
+    language = models.ForeignKey(Language,
+                                 on_delete=models.CASCADE)
+    name = models.CharField(max_length=255,
+                            help_text="Translated name of the country")
 
     class Meta:
-        unique_together = ('country', 'language')  # One translation per country per language
+        # One translation per country per language
+        unique_together = ('country', 'language')
 
     def __str__(self):
         return f"{self.name} ({self.language.code})"
@@ -65,7 +70,11 @@ class CountryTranslation(models.Model):
 
 class DiveLocation(models.Model):
     """A dive location"""
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True, help_text="Country where the location is based")
+    country = models.ForeignKey(Country,
+                                on_delete=models.SET_NULL,
+                                null=True,
+                                blank=True,
+                                help_text="Country where the location is based")
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     language = models.ForeignKey(Language, on_delete=models.SET_DEFAULT, default=1)
@@ -99,6 +108,54 @@ class DiveLocation(models.Model):
         fallback = self.translations.filter(language__code='nl').first()
         return fallback.description if fallback else ""
 
+    def get_dangers_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).dangers or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_nicknames_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).nicknames or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_address_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).address or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_parking_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).parking or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_sight_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).sight or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_max_depth_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).max_depth or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_bottom_type_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).bottom_type or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
+    def get_type_of_water_for_language(self, lang_code):
+        try:
+            return self.translations.get(language__code=lang_code).type_of_water or ''
+        except DiveLocationTranslation.DoesNotExist:
+            return ''
+
     def get_slug_for_language(self, lang_code):
         """Get the slug for a specific language."""
         translation = self.translations.filter(
@@ -128,12 +185,32 @@ class DiveLocationTranslation(models.Model):
                                       on_delete=models.CASCADE,
                                       related_name='translations')
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, help_text="Translated name of the location")
-    description = models.TextField(blank=True, help_text="Translated description of the location")
-    slug = models.SlugField(blank=True, help_text="URL slug for this translation")
+    name = models.CharField(max_length=255,
+                            help_text="Translated name of the location")
+    description = models.TextField(blank=True,
+                                   help_text="Translated description of the location")
+    dangers = models.TextField(blank=True,
+                               help_text="Translated dangers or warnings for the location")
+    nicknames = models.TextField(blank=True,
+                                 help_text="Translated nicknames or alternative names for the location")
+    address = models.TextField(blank=True,
+                               help_text="Translated address details for the location")
+    parking = models.TextField(blank=True,
+                               help_text="Translated parking information for the location")
+    sight = models.TextField(blank=True,
+                             help_text="Translated sight or visibility details for the location")
+    max_depth = models.TextField(blank=True,
+                                 help_text="Translated max depth information for the location")
+    bottom_type = models.TextField(blank=True,
+                                   help_text="Translated bottom type description for the location")
+    type_of_water = models.TextField(blank=True,
+                                     help_text="Translated type of water description for the location")
+    slug = models.SlugField(blank=True,
+                            help_text="URL slug for this translation")
 
     class Meta:
-        unique_together = ('dive_location', 'language')  # One translation per location per language
+        # One translation per location per language
+        unique_together = ('dive_location', 'language')
 
     def __str__(self):
         return f"{self.name} ({self.language.code})"
@@ -155,6 +232,14 @@ class DiveLocationSuggestion(models.Model):
     suggested_by = models.ForeignKey(User, on_delete=models.CASCADE)
     suggested_name = models.CharField(max_length=255, blank=True)
     suggested_description = models.TextField(blank=True)
+    suggested_dangers = models.TextField(blank=True)
+    suggested_nicknames = models.TextField(blank=True)
+    suggested_address = models.TextField(blank=True)
+    suggested_parking = models.TextField(blank=True)
+    suggested_sight = models.TextField(blank=True)
+    suggested_max_depth = models.TextField(blank=True)
+    suggested_bottom_type = models.TextField(blank=True)
+    suggested_type_of_water = models.TextField(blank=True)
     suggested_country = models.ForeignKey(Country,
                                           on_delete=models.SET_NULL,
                                           null=True,
@@ -195,6 +280,14 @@ class DiveLocationSuggestion(models.Model):
                 defaults={
                     'name': self.suggested_name or f"Location {self.original_location.id}",
                     'description': self.suggested_description or '',
+                    'dangers': self.suggested_dangers or '',
+                    'nicknames': self.suggested_nicknames or '',
+                    'address': self.suggested_address or '',
+                    'parking': self.suggested_parking or '',
+                    'sight': self.suggested_sight or '',
+                    'max_depth': self.suggested_max_depth or '',
+                    'bottom_type': self.suggested_bottom_type or '',
+                    'type_of_water': self.suggested_type_of_water or '',
                     'slug': ''
                 }
             )
@@ -204,6 +297,22 @@ class DiveLocationSuggestion(models.Model):
                     translation.name = self.suggested_name
                 if self.suggested_description:
                     translation.description = self.suggested_description
+                if self.suggested_dangers:
+                    translation.dangers = self.suggested_dangers
+                if self.suggested_nicknames:
+                    translation.nicknames = self.suggested_nicknames
+                if self.suggested_address:
+                    translation.address = self.suggested_address
+                if self.suggested_parking:
+                    translation.parking = self.suggested_parking
+                if self.suggested_sight:
+                    translation.sight = self.suggested_sight
+                if self.suggested_max_depth:
+                    translation.max_depth = self.suggested_max_depth
+                if self.suggested_bottom_type:
+                    translation.bottom_type = self.suggested_bottom_type
+                if self.suggested_type_of_water:
+                    translation.type_of_water = self.suggested_type_of_water
 
             # Generate slug
             if translation.name:

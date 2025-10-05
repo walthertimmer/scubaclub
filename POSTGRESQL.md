@@ -1,5 +1,7 @@
 # postgres for local testing
 
+Setup a local postgresql container to test the application against.
+
 pull latest postgres
 
 ````bash

@@ -177,6 +177,8 @@ def club_detail(request, club_slug):
     except DiveClubTranslation.DoesNotExist:
         # Instead of raising Http404, redirect to the club overview page
         # This handles cases where the club doesn't exist in the current language
+        logger.warning("Club with slug %s not found in language %s",
+                          club_slug, current_lang)
         return redirect('website:dive_clubs')
 
     # Populate translated name and description for the template
@@ -188,7 +190,7 @@ def club_detail(request, club_slug):
         'members': club.members.all(),
         'admins': club.admins.all(),
         'pending_members': club.pending_members.all(),
-        'club_events': club.events.filter(date__gte=timezone.now()),
+        'club_events': club.dives.filter(date__gte=timezone.now()),
         'club_slug': club.get_slug_for_language(current_lang),
     }
     return render(request, "website/club_detail.html", context)
@@ -557,14 +559,13 @@ def suggest_location_edit(request, location_slug):
     location.name = location.get_name_for_language(current_lang)
     location.slug = location.get_slug_for_language(current_lang)
 
-
     if request.method == 'POST':
         form = DiveLocationSuggestionForm(request.POST, location=location)
         if form.is_valid():
             suggestion = form.save(commit=False)
             suggestion.original_location = location
             suggestion.suggested_by = request.user
-            # suggestion.target_language = Language.objects.get(code=current_lang)
+            suggestion.target_language = Language.objects.get(code=current_lang)
             suggestion.save()
             return redirect('website:location_detail',
                             location_slug=location_slug)
@@ -584,6 +585,14 @@ def suggest_location_edit(request, location_slug):
         if current_translation:
             initial_data['suggested_name'] = current_translation.name
             initial_data['suggested_description'] = current_translation.description
+            initial_data['suggested_dangers'] = current_translation.dangers
+            initial_data['suggested_nicknames'] = current_translation.nicknames
+            initial_data['suggested_address'] = current_translation.address
+            initial_data['suggested_parking'] = current_translation.parking
+            initial_data['suggested_sight'] = current_translation.sight
+            initial_data['suggested_max_depth'] = current_translation.max_depth
+            initial_data['suggested_bottom_type'] = current_translation.bottom_type
+            initial_data['suggested_type_of_water'] = current_translation.type_of_water
 
         form = DiveLocationSuggestionForm(
             initial=initial_data,
@@ -596,7 +605,15 @@ def suggest_location_edit(request, location_slug):
     for translation in location.translations.all():
         translations_data[translation.language.code] = {
             'name': translation.name,
-            'description': translation.description
+            'description': translation.description,
+            'dangers': translation.dangers,
+            'nicknames': translation.nicknames,
+            'address': translation.address,
+            'parking': translation.parking,
+            'sight': translation.sight,
+            'max_depth': translation.max_depth,
+            'bottom_type': translation.bottom_type,
+            'type_of_water': translation.type_of_water
         }
 
     return render(request, 'website/suggest_location_edit.html', {
@@ -614,12 +631,48 @@ def review_location_suggestions(request):
     suggestions = DiveLocationSuggestion.objects.filter(status='pending')
     current_lang = get_language()
 
+    # Define all fields to check for changes (translated and non-translated)
+    fields_to_check = [
+        ('name', 'Name', True),  # True = translated field
+        ('description', 'Description', True),
+        ('dangers', 'Dangers', True),
+        ('nicknames', 'Nicknames', True),
+        ('address', 'Address', True),
+        ('parking', 'Parking', True),
+        ('sight', 'Sight', True),
+        ('max_depth', 'Max Depth', True),
+        ('bottom_type', 'Bottom Type', True),
+        ('type_of_water', 'Type of Water', True),
+        ('country', 'Country', False),  # False = non-translated field
+        ('latitude', 'Latitude', False),
+        ('longitude', 'Longitude', False),
+    ]
+
     # Set translated fields for each suggestion's location
     for suggestion in suggestions:
+        # Set translated fields for display
         suggestion.original_location.name = suggestion.original_location \
             .get_name_for_language(current_lang)
         suggestion.original_location.description = suggestion.original_location \
             .get_description_for_language(current_lang)
+
+        # Dynamically build a list of changes
+        suggestion.changes = []
+        for field, display_name, is_translated in fields_to_check:
+            suggested_value = getattr(suggestion, f'suggested_{field}', None)
+            if suggested_value:  # Only include if there's a suggested change
+                if is_translated:
+                    # Get the current translated value for the original location
+                    original_value = getattr(suggestion.original_location,
+                                             f'get_{field}_for_language')(current_lang)
+                else:
+                    # Get the direct field value for non-translated fields
+                    original_value = getattr(suggestion.original_location, field, '')
+                suggestion.changes.append({
+                    'field': display_name,
+                    'original': original_value,
+                    'suggested': suggested_value
+                })
 
     return render(request, 'website/review_location_suggestions.html', {
         'suggestions': suggestions
@@ -663,11 +716,21 @@ def location_detail(request, location_slug):
     except Http404:
         # If location doesn't exist in current language,
         # redirect to locations overview
+        logger.warning("Location with slug %s not found in language %s",
+                       location_slug, current_lang)
         return redirect('website:dive_locations')
 
     # Set translated fields for template
     location.name = location.get_name_for_language(current_lang)
     location.description = location.get_description_for_language(current_lang)
+    location.dangers = location.get_dangers_for_language(current_lang)
+    location.nicknames = location.get_nicknames_for_language(current_lang)
+    location.address = location.get_address_for_language(current_lang)
+    location.parking = location.get_parking_for_language(current_lang)
+    location.sight = location.get_sight_for_language(current_lang)
+    location.max_depth = location.get_max_depth_for_language(current_lang)
+    location.bottom_type = location.get_bottom_type_for_language(current_lang)
+    location.type_of_water = location.get_type_of_water_for_language(current_lang)
     location.slug = location.get_slug_for_language(current_lang)
 
     suggestions = None

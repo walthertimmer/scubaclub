@@ -6,6 +6,14 @@
 {% block content %}
 <h2>{% trans "Dive location" %} {{ location.name }}</h2>
 <p><strong>{% trans "Description" %}:</strong> {{ location.description }}</p>
+<p><strong>{% trans "Dangers" %}:</strong> {{ location.dangers }}</p>
+<p><strong>{% trans "Nicknames" %}:</strong> {{ location.nicknames }}</p>
+<p><strong>{% trans "Address" %}:</strong> {{ location.address }}</p>
+<p><strong>{% trans "Parking" %}:</strong> {{ location.parking }}</p>
+<p><strong>{% trans "Sight" %}:</strong> {{ location.sight }}</p>
+<p><strong>{% trans "Max Depth" %}:</strong> {{ location.max_depth }}</p>
+<p><strong>{% trans "Bottom Type" %}:</strong> {{ location.bottom_type }}</p>
+<p><strong>{% trans "Type of Water" %}:</strong> {{ location.type_of_water }}</p>
 <p><strong>{% trans "Country" %}:</strong> {{ location.country }}</p>
 {% if location.latitude and location.longitude %}
     <p><strong>{% trans "Coordinates" %}:</strong> {{ location.latitude }}, {{ location.longitude }}</p>

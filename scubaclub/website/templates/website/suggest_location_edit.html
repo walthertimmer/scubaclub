@@ -25,6 +25,14 @@ function updateFormFields(languageCode) {
     // Get form fields
     const nameField = document.getElementById('id_suggested_name');
     const descriptionField = document.getElementById('id_suggested_description');
+    const dangersField = document.getElementById('id_suggested_dangers');
+    const nicknamesField = document.getElementById('id_suggested_nicknames');
+    const addressField = document.getElementById('id_suggested_address');
+    const parkingField = document.getElementById('id_suggested_parking');
+    const sightField = document.getElementById('id_suggested_sight');
+    const maxDepthField = document.getElementById('id_suggested_max_depth');
+    const bottomTypeField = document.getElementById('id_suggested_bottom_type');
+    const typeOfWaterField = document.getElementById('id_suggested_type_of_water');
     const countryField = document.getElementById('id_suggested_country');
     const latitudeField = document.getElementById('id_suggested_latitude');
     const longitudeField = document.getElementById('id_suggested_longitude');
@@ -33,14 +41,46 @@ function updateFormFields(languageCode) {
     if (translationsData[languageCode]) {
         nameField.value = translationsData[languageCode].name || '';
         descriptionField.value = translationsData[languageCode].description || '';
+        dangersField.value = translationsData[languageCode].dangers || '';
+        nicknamesField.value = translationsData[languageCode].nicknames || '';
+        addressField.value = translationsData[languageCode].address || '';
+        parkingField.value = translationsData[languageCode].parking || '';
+        sightField.value = translationsData[languageCode].sight || '';
+        maxDepthField.value = translationsData[languageCode].max_depth || '';
+        bottomTypeField.value = translationsData[languageCode].bottom_type || '';
+        typeOfWaterField.value = translationsData[languageCode].type_of_water || '';
         nameField.placeholder = '';
         descriptionField.placeholder = '';
+        dangersField.placeholder = '';
+        nicknamesField.placeholder = '';
+        addressField.placeholder = '';
+        parkingField.placeholder = '';
+        sightField.placeholder = '';
+        maxDepthField.placeholder = '';
+        bottomTypeField.placeholder = '';
+        typeOfWaterField.placeholder = '';
     } else {
         // No translation exists for this language
         nameField.value = '';
         descriptionField.value = '';
+        dangersField.value = '';
+        nicknamesField.value = '';
+        addressField.value = '';
+        parkingField.value = '';
+        sightField.value = '';
+        maxDepthField.value = '';
+        bottomTypeField.value = '';
+        typeOfWaterField.value = '';
         nameField.placeholder = `Add ${languageCode.toUpperCase()} name for this location`;
         descriptionField.placeholder = `Add ${languageCode.toUpperCase()} description for this location`;
+        dangersField.placeholder = `Add ${languageCode.toUpperCase()} dangers for this location`;
+        nicknamesField.placeholder = `Add ${languageCode.toUpperCase()} nicknames for this location`;
+        addressField.placeholder = `Add ${languageCode.toUpperCase()} address for this location`;
+        parkingField.placeholder = `Add ${languageCode.toUpperCase()} parking for this location`;
+        sightField.placeholder = `Add ${languageCode.toUpperCase()} sight for this location`;
+        maxDepthField.placeholder = `Add ${languageCode.toUpperCase()} max depth for this location`;
+        bottomTypeField.placeholder = `Add ${languageCode.toUpperCase()} bottom type for this location`;
+        typeOfWaterField.placeholder = `Add ${languageCode.toUpperCase()} type of water for this location`;
     }
 
     // Always populate non-translatable fields with current values
