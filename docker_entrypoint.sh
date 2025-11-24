@@ -12,6 +12,9 @@ if [ "$ENVIRONMENT" = "dev" ]; then
     echo "Starting Django development server..."
     exec python manage.py runserver 0.0.0.0:${PORT:-8000}
 else
+    echo "Collecting static files for prod..."
+    python manage.py collectstatic --noinput
+
     echo "running with gunicorn"
     # Production mode - use Gunicorn
     exec gunicorn scubaclub.wsgi:application \
