@@ -1,0 +1,13 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create Dive Location" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Create a New Dive Location" %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="cta-button">{% trans "Create Location" %}</button>
+</form>
+{% endblock %}

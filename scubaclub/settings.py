@@ -38,6 +38,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV = os.getenv("ENVIRONMENT", "prd")
 log(f"Environment: {ENV}")
+USE_S3_STORAGE = os.getenv("USE_S3_STORAGE", "false").lower() == "true"
+log(f"Use S3 Storage: {USE_S3_STORAGE}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -214,7 +216,7 @@ else:
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 # Static files storage
-if ENV == "prd":
+if USE_S3_STORAGE:
     # Object Storage for static files
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
@@ -276,3 +278,24 @@ else:
 log(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 log(f"STATIC_URL: {locals().get('STATIC_URL', None)}")
 log(f"EMAIL_BACKEND: {locals().get('EMAIL_BACKEND', None)}")
+
+# Test database connection
+try:
+    from django.db import connection
+    connection.ensure_connection()
+    log("Database connection successful")
+except Exception as e:
+    log(f"Database connection failed: {e}")
+
+# Test email connection
+try:
+    import smtplib
+    server = smtplib.SMTP(EMAIL_HOST, int(EMAIL_PORT))
+    if EMAIL_USE_SSL:
+        server.starttls()
+    if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+        server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+    server.quit()
+    log("Email connection successful")
+except Exception as e:
+    log(f"Email connection failed: {e}")

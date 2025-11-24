@@ -2,4 +2,4 @@
 
 ## Reporting a Vulnerability
 
-Please report any vulnerabilities to walthertimmer [at] protonmail.com
+Please report any vulnerabilities to scubaclub.9nwtu@passmail.net

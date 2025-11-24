@@ -1,0 +1,27 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive Locations" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Dive Locations" %}</h2>
+
+{% if user.is_authenticated %}
+    <p><a href="{% url 'website:create_dive_location' %}">{% trans "Create a new dive location" %}</a></p>
+{% else %}
+    <p>{% trans "Please log in to create your own dive locations." %}</p>
+{% endif %}
+
+<ul>
+    {% for location in locations %}
+    <li><a href="{% url 'website:location_detail' location_slug=location.slug %}">{{ location.name }}</a> - {{ location.description }}</li>
+    {% empty %}
+    <li>{% trans "No dive locations available." %}</li>
+    {% endfor %}
+</ul>
+
+{% if user.is_superuser %}
+    <p><a href="{% url 'website:review_location_suggestions' %}">{% trans "Review edit suggestions" %}</a></p>
+{% endif %}
+
+{% endblock %}

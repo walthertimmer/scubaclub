@@ -1,0 +1,39 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive details" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Dive" %} {{ dive.title }}</h2>
+{% if dive.is_cancelled %}
+    <p style="color: red;"><strong>{% trans "This dive has been cancelled." %}</strong></p>
+{% endif %}
+<p><strong>{% trans "Description" %}:</strong> {{ dive.description }}</p>
+<p><strong>{% trans "Location" %}:</strong> <a href="{% url 'website:location_detail' location_slug=location.slug %}">{{ location.name }}</a></p>
+<p><strong>{% trans "Date" %}:</strong> {{ dive.date|date:"F j, Y H:i" }}</p>
+<p><strong>{% trans "Max Participants" %}:</strong> {{ dive.max_participants }}</p>
+<p><strong>{% trans "Organizer" %}:</strong> {{ dive.organizer.username }}</p>
+{% if dive.club %}
+  <p><strong>{% trans "Club" %}:</strong> <a href="{% url 'website:club_detail' dive.club.slug %}">{{ dive.club.name }}</a></p>
+{% else %}
+  <p><strong>{% trans "Type" %}:</strong> {% trans "Open dive" %}</p>
+{% endif %}
+
+<!-- Add edit and cancel buttons if user has permission and not cancelled -->
+{% if user.is_authenticated and not dive.is_cancelled %}
+  {% if dive.club %}
+    {% if user in dive.club.admins.all %}
+      <a href="{% url 'website:edit_dive' dive.id %}" class="cta-button">{% trans "Edit dive" %}</a>
+      <a href="{% url 'website:cancel_dive' dive.id %}">{% trans "Cancel dive" %}</a>
+    {% endif %}
+  {% else %}
+    {% if user == dive.organizer %}
+      <a href="{% url 'website:edit_dive' dive.id %}" class="cta-button">{% trans "Edit dive" %}</a>
+      <a href="{% url 'website:cancel_dive' dive.id %}">{% trans "Cancel dive" %}</a>
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+<!-- Add join/leave buttons here if implementing participant management -->
+
+{% endblock %}

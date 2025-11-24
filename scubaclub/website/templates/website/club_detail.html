@@ -1,0 +1,160 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dive club details" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Dive club: " %}{{ club.name }}</h2>
+
+{% if club.description %}
+<p><strong>{% trans "Description:" %}</strong> {{ club.description }}</p>
+{% endif %}
+
+<h3>{% trans "Contact Information" %}</h3>
+{% if club.address %}
+<p><strong>{% trans "Address:" %}</strong> {{ club.address }}</p>
+{% endif %}
+{% if club.municipality %}
+<p><strong>{% trans "Municipality:" %}</strong> {{ club.municipality }}</p>
+{% endif %}
+{% if club.postal_code %}
+<p><strong>{% trans "Postal code:" %}</strong> {{ club.postal_code }}</p>
+{% endif %}
+{% if club.country %}
+<p><strong>{% trans "Country:" %}</strong> {{ club.country }}</p>
+{% endif %}
+{% if club.telephone %}
+<p><strong>{% trans "Telephone:" %}</strong> {{ club.telephone }}</p>
+{% endif %}
+{% if club.website %}
+<p><strong>{% trans "Website:" %}</strong> <a href="{{ club.website }}" target="_blank">{{ club.website }}</a></p>
+{% endif %}
+{% if club.email %}
+<p><strong>{% trans "Email:" %}</strong> <a href="mailto:{{ club.email }}">{{ club.email }}</a></p>
+{% endif %}
+
+<h3>{% trans "Admins" %}</h3>
+  {% if admins %}
+    <ul>
+      {% for admin in admins %}
+        <li>{{ admin.username }}
+          {% if user in admins %}
+          <form method="post" action="{% url 'website:remove_admin' club.id admin.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="cta-button" style="background: red;">{% trans "Remove admin" %}</button>
+          </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>{% trans "No admins." %}</p>
+  {% endif %}
+
+{% if user.is_authenticated and user not in members and user not in pending_members %}
+  <form method="post" action="{% url 'website:request_join_club' club.id %}">
+    {% csrf_token %}
+    <button type="submit" class="cta-button">{% trans "Request to Join" %}</button>
+  </form>
+{% endif %}
+
+{% if user in pending_members %}
+<p>{% trans "Your request to join is pending approval." %}</p>
+{% endif %}
+
+{% if user in members %}
+<p>{% trans "You are a member of this club." %}</p>
+{% endif %}
+
+{% if user in admins %}
+  <h3>{% trans "Pending Members" %}</h3>
+  {% if pending_members %}
+    <ul>
+      {% for pending in pending_members %}
+        <li>{{ pending.username }}
+          <form method="post" action="{% url 'website:approve_member' club.id pending.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="cta-button">{% trans "Approve" %}</button>
+          </form>
+          <form method="post" action="{% url 'website:reject_member' club.id pending.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="cta-button" style="background: red;">{% trans "Reject" %}</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>{% trans "No pending members." %}</p>
+  {% endif %}
+
+  <h3>{% trans "Members" %}</h3>
+  {% if members %}
+    <ul>
+      {% for member in members %}
+        <li>{{ member.username }}
+          {% if member not in admins %}
+            <form method="post" action="{% url 'website:promote_to_admin' club.id member.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="cta-button">{% trans "Promote to admin" %}</button>
+            </form>
+          {% endif %}
+          <form method="post" action="{% url 'website:remove_member' club.id member.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="cta-button">{% trans "Remove" %}</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>{% trans "No members yet." %}</p>
+  {% endif %}
+{% else %}
+  <h3>{% trans "Members" %}</h3>
+  {% if members %}
+    <ul>
+      {% for member in members %}
+        <li>{{ member.username }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>{% trans "No members yet." %}</p>
+  {% endif %}
+{% endif %}
+
+<h3>{% trans "Upcoming dives" %}</h3>
+{% if user in members or user in admins %}
+  <a href="{% url 'website:create_dive_event_with_club' club.id %}" class="cta-button">{% trans "Create dive" %}</a>
+{% endif %}
+{% if club_events %}
+  <ul>
+    {% for event in club_events %}
+      <li><a href="{% url 'website:dive_detail' event.id %}">{{ event.title }}</a> - {{ event.date|date:"F j, Y" }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>{% trans "No upcoming dives." %}</p>
+{% endif %}
+
+<h3>{% trans "Dive locations" %}</h3>
+{% if club_locations %}
+  <ul>
+    {% for location in club_locations %}
+      <li><a href="{% url 'website:location_detail' location.id %}">{{ location.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>{% trans "No associated locations." %}</p>
+{% endif %}
+
+{% if user in admins %}
+  <h3>{% trans "Manage Club" %}</h3>
+  <a href="{% url 'website:edit_dive_club' club_slug %}" class="cta-button">{% trans "Edit club" %}</a>
+{% endif %}
+
+{% if not user.is_authenticated %}
+  <p>{% trans "To request to join this club or create a club dive event, please" %} <a href="{% url 'website:login' %}">{% trans "log in" %}</a>.</p>
+{% endif %}
+
+<a href="{% url 'website:dive_clubs' %}">{% trans "Back to overview of clubs" %}</a>
+
+{% endblock %}

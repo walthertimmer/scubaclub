@@ -1,0 +1,14 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit dive" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Edit dive" %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="cta-button">{% trans "Save changes" %}</button>
+</form>
+<a href="{% url 'website:dive_detail' dive.id %}">{% trans "Cancel" %}</a>
+{% endblock %}

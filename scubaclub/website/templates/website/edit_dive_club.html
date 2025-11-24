@@ -1,0 +1,14 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit dive club" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Edit dive club" %} - {{ club_name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="cta-button">{% trans "Save changes" %}</button>
+</form>
+<a href="{% url 'website:club_detail' club_slug=club_slug %}">{% trans "Cancel" %}</a>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "website/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Review location suggestions" %}{% endblock %}
+
+{% block content %}
+<h2>{% trans "Pending location edit suggestions" %}</h2>
+<ul>
+    {% for suggestion in suggestions %}
+        <li>
+            <strong>{% trans "Location" %}:</strong> {{ suggestion.original_location.name }}<br>
+            <strong>{% trans "Language" %}:</strong> {{ suggestion.target_language.name }} ({{ suggestion.target_language.code }})<br>
+            <strong>{% trans "Suggested by" %}:</strong> {{ suggestion.suggested_by.username }}<br>
+            <em>{% trans "Submitted on" %}: {{ suggestion.created_at|date:"F j, Y H:i" }}</em><br>
+
+            <!-- Display changes dynamically -->
+            <h4>{% trans "Proposed changes" %}:</h4>
+            <ul>
+                {% for change in suggestion.changes %}
+                    <li><strong>{% trans change.field %}:</strong> {% trans "Original" %}: {{ change.original|truncatechars:50 }} → {% trans "Suggested" %}: {{ change.suggested|truncatechars:50 }}</li>
+                {% empty %}
+                    <li><em>{% trans "No specific changes suggested (all fields blank)." %}</em></li>
+                {% endfor %}
+            </ul>
+
+            <a href="{% url 'website:approve_location_suggestion' suggestion.id %}">{% trans "Approve" %}</a> |
+            <a href="{% url 'website:reject_location_suggestion' suggestion.id %}">{% trans "Reject" %}</a>
+        </li>
+    {% empty %}
+        <li>{% trans "No pending suggestions." %}</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'website:dive_locations' %}">{% trans "Back to dive locations" %}</a>
+
+{% endblock %}

@@ -2,13 +2,13 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}{% trans Register %}{% endblock %}
+{% block title %}{% trans "Register" %}{% endblock %}
 
 {% block content %}
   <h2>{% trans Register %}</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="{% trans Register %}">
+    <input type="submit" value="{% trans "Register" %}">
   </form>
 {% endblock %}
