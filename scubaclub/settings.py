@@ -73,11 +73,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'scubaclub.website',
-    'storages'
+    'storages',
+    'whitenoise'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -274,6 +276,12 @@ else:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/website'),]
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 log(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 log(f"STATIC_URL: {locals().get('STATIC_URL', None)}")
