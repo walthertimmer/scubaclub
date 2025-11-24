@@ -2,10 +2,10 @@
 name: deploy
 
 on:
-  workflow_run:
-    workflows: ["Build"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["Build"]
+  #   types:
+  #     - completed
   workflow_dispatch:
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
           run: |
             echo "$KUBECONFIG_CONTENT" > $HOME/kubeconfig
             echo "KUBECONFIG=$HOME/kubeconfig" >> $GITHUB_ENV
-          
+
         - name: Rollout restart deployment
           run: |
             kubectl rollout restart deployment scubaclub -n scubaclub
